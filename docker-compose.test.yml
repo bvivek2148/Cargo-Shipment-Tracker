@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  mongodb-test:
+    image: mongo:7.0
+    container_name: cargo-mongodb-test
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: cargo_tracker_test
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
+  redis-test:
+    image: redis:7.2-alpine
+    container_name: cargo-redis-test
+    ports:
+      - "6380:6379"
+    command: redis-server --requirepass redis123
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
+  backend-test:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    container_name: cargo-backend-test
+    ports:
+      - "5001:5000"
+    environment:
+      NODE_ENV: test
+      PORT: 5000
+      MONGODB_URI: mongodb://admin:admin123@mongodb-test:27017/cargo_tracker_test?authSource=admin
+      REDIS_URL: redis://:redis123@redis-test:6379
+      JWT_SECRET: test-jwt-secret-key
+      FRONTEND_URL: http://localhost:3000
+    depends_on:
+      mongodb-test:
+        condition: service_healthy
+      redis-test:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
+  frontend-test:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    container_name: cargo-frontend-test
+    ports:
+      - "3000:80"
+    environment:
+      VITE_API_URL: http://backend-test:5000/api
+    depends_on:
+      backend-test:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16

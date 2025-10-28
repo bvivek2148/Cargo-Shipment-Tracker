@@ -1,0 +1,120 @@
+config:
+  target: "http://localhost:5000"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm up"
+    - duration: 120
+      arrivalRate: 10
+      name: "Sustained load"
+    - duration: 60
+      arrivalRate: 20
+      name: "Peak load"
+  processor: "./processor.js"
+  variables:
+    testEmail: "loadtest@example.com"
+  payload:
+    path: "./test-data.csv"
+    fields:
+      - "email"
+      - "password"
+  defaults:
+    headers:
+      Content-Type: "application/json"
+
+scenarios:
+  - name: "Health Check"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/health"
+          expect:
+            - statusCode: 200
+
+  - name: "User Authentication"
+    weight: 30
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "{{ testEmail }}"
+            password: "TestPassword123!"
+          capture:
+            - json: "$.data.token"
+              as: "authToken"
+          expect:
+            - statusCode: 200
+
+  - name: "Get Shipments List"
+    weight: 40
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "{{ testEmail }}"
+            password: "TestPassword123!"
+          capture:
+            - json: "$.data.token"
+              as: "authToken"
+      - get:
+          url: "/api/shipments?page=1&limit=20"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+            - contentType: json
+
+  - name: "Create and Update Shipment"
+    weight: 15
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "admin@cargotracker.com"
+            password: "Admin123!@#"
+          capture:
+            - json: "$.data.token"
+              as: "authToken"
+      - post:
+          url: "/api/shipments"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            trackingNumber: "LOAD-{{ $randomString() }}"
+            origin: "New York, USA"
+            destination: "Los Angeles, USA"
+            status: "pending"
+            weight: 1000
+            customerInfo:
+              name: "Load Test Customer"
+              email: "customer@example.com"
+              phone: "+1234567890"
+          capture:
+            - json: "$.data._id"
+              as: "shipmentId"
+          expect:
+            - statusCode: 201
+      - get:
+          url: "/api/shipments/{{ shipmentId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+
+  - name: "Get Statistics"
+    weight: 5
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "admin@cargotracker.com"
+            password: "Admin123!@#"
+          capture:
+            - json: "$.data.token"
+              as: "authToken"
+      - get:
+          url: "/api/stats"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
