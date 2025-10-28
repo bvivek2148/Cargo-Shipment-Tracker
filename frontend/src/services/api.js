@@ -273,9 +273,6 @@ export const userAPI = {
 // Export the main API instance for direct use
 export { api }
 
-// For backward compatibility, also export shipmentAPI as default
-export default shipmentAPI
-
 // Health check function
 export const healthCheck = async () => {
   try {
@@ -286,4 +283,5 @@ export const healthCheck = async () => {
   }
 }
 
-export default api
+// Export shipmentAPI as default
+export default shipmentAPI
