@@ -1,18 +1,27 @@
-import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Package, MapPin, Clock, Truck, AlertTriangle, Download, Share2 } from 'lucide-react'
-import ShipmentMap from './maps/ShipmentMap'
-import RealTimeTracker from './tracking/RealTimeTracker'
+import { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import {
+  ArrowLeft,
+  Package,
+  MapPin,
+  Clock,
+  Truck,
+  AlertTriangle,
+  Download,
+  Share2,
+} from 'lucide-react';
+import ShipmentMap from './maps/ShipmentMap';
+import RealTimeTracker from './tracking/RealTimeTracker';
 
 function EnhancedShipmentDetails() {
-  const { id } = useParams()
-  const [shipment, setShipment] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('overview')
+  const { id } = useParams();
+  const [shipment, setShipment] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('overview');
 
   // Sample shipment data (in real app, this would come from API)
   const sampleShipments = {
-    '1': {
+    1: {
       id: '1',
       trackingNumber: 'CST001',
       status: 'In Transit',
@@ -31,15 +40,15 @@ function EnhancedShipmentDetails() {
       customer: {
         name: 'Tech Solutions Inc.',
         email: 'orders@techsolutions.com',
-        phone: '+1-555-0123'
+        phone: '+1-555-0123',
       },
       documents: [
         { name: 'Bill of Lading', type: 'PDF', size: '245 KB' },
         { name: 'Commercial Invoice', type: 'PDF', size: '189 KB' },
-        { name: 'Packing List', type: 'PDF', size: '156 KB' }
-      ]
+        { name: 'Packing List', type: 'PDF', size: '156 KB' },
+      ],
     },
-    '2': {
+    2: {
       id: '2',
       trackingNumber: 'CST002',
       status: 'Pending',
@@ -58,46 +67,46 @@ function EnhancedShipmentDetails() {
       customer: {
         name: 'Fashion Forward LLC',
         email: 'shipping@fashionforward.com',
-        phone: '+1-555-0456'
+        phone: '+1-555-0456',
       },
       documents: [
         { name: 'Export Declaration', type: 'PDF', size: '198 KB' },
-        { name: 'Certificate of Origin', type: 'PDF', size: '167 KB' }
-      ]
-    }
-  }
+        { name: 'Certificate of Origin', type: 'PDF', size: '167 KB' },
+      ],
+    },
+  };
 
   useEffect(() => {
     // Simulate API call
     setTimeout(() => {
-      const shipmentData = sampleShipments[id]
-      setShipment(shipmentData)
-      setLoading(false)
-    }, 1000)
-  }, [id])
+      const shipmentData = sampleShipments[id];
+      setShipment(shipmentData);
+      setLoading(false);
+    }, 1000);
+  }, [id]);
 
   const handleLocationUpdate = (newLocation) => {
-    setShipment(prev => ({
+    setShipment((prev) => ({
       ...prev,
       currentLocation: newLocation.name,
-      lastUpdate: newLocation.timestamp
-    }))
-  }
+      lastUpdate: newLocation.timestamp,
+    }));
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
       case 'Delivered':
-        return 'status-delivered'
+        return 'status-delivered';
       case 'In Transit':
-        return 'status-in-transit'
+        return 'status-in-transit';
       case 'Delayed':
-        return 'status-delayed'
+        return 'status-delayed';
       case 'Pending':
-        return 'status-pending'
+        return 'status-pending';
       default:
-        return 'status-default'
+        return 'status-default';
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -107,7 +116,7 @@ function EnhancedShipmentDetails() {
           <p>Loading shipment details...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!shipment) {
@@ -123,7 +132,7 @@ function EnhancedShipmentDetails() {
           </Link>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -136,7 +145,7 @@ function EnhancedShipmentDetails() {
             Back to Shipments
           </Link>
         </div>
-        
+
         <div className="header-content">
           <div className="header-info">
             <h1>{shipment.trackingNumber}</h1>
@@ -144,7 +153,7 @@ function EnhancedShipmentDetails() {
               {shipment.status}
             </span>
           </div>
-          
+
           <div className="header-actions">
             <button className="btn btn-secondary">
               <Share2 size={16} />
@@ -160,21 +169,21 @@ function EnhancedShipmentDetails() {
 
       {/* Tabs */}
       <div className="details-tabs">
-        <button 
+        <button
           className={`tab-button ${activeTab === 'overview' ? 'active' : ''}`}
           onClick={() => setActiveTab('overview')}
         >
           <Package size={16} />
           Overview
         </button>
-        <button 
+        <button
           className={`tab-button ${activeTab === 'tracking' ? 'active' : ''}`}
           onClick={() => setActiveTab('tracking')}
         >
           <MapPin size={16} />
           Tracking
         </button>
-        <button 
+        <button
           className={`tab-button ${activeTab === 'documents' ? 'active' : ''}`}
           onClick={() => setActiveTab('documents')}
         >
@@ -232,9 +241,9 @@ function EnhancedShipmentDetails() {
                       <span>{shipment.origin}</span>
                     </div>
                   </div>
-                  
+
                   <div className="route-line"></div>
-                  
+
                   <div className="route-point current">
                     <div className="route-marker">🚛</div>
                     <div className="route-details">
@@ -242,9 +251,9 @@ function EnhancedShipmentDetails() {
                       <span>{shipment.currentLocation}</span>
                     </div>
                   </div>
-                  
+
                   <div className="route-line"></div>
-                  
+
                   <div className="route-point destination">
                     <div className="route-marker">🎯</div>
                     <div className="route-details">
@@ -304,16 +313,10 @@ function EnhancedShipmentDetails() {
           <div className="tracking-tab">
             <div className="tracking-grid">
               <div className="tracking-map">
-                <ShipmentMap 
-                  shipments={[shipment]} 
-                  selectedShipment={shipment}
-                />
+                <ShipmentMap shipments={[shipment]} selectedShipment={shipment} />
               </div>
               <div className="tracking-details">
-                <RealTimeTracker 
-                  shipment={shipment}
-                  onLocationUpdate={handleLocationUpdate}
-                />
+                <RealTimeTracker shipment={shipment} onLocationUpdate={handleLocationUpdate} />
               </div>
             </div>
           </div>
@@ -325,7 +328,7 @@ function EnhancedShipmentDetails() {
               <h3>📄 Shipping Documents</h3>
               <p>Download or view shipping documents for this shipment</p>
             </div>
-            
+
             <div className="documents-list">
               {shipment.documents.map((doc, index) => (
                 <div key={index} className="document-item">
@@ -352,7 +355,7 @@ function EnhancedShipmentDetails() {
         )}
       </div>
     </div>
-  )
+  );
 }
 
-export default EnhancedShipmentDetails
+export default EnhancedShipmentDetails;

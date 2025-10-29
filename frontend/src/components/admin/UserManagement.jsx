@@ -1,35 +1,45 @@
-import { useState, useEffect } from 'react'
-import { useAuth } from '../../contexts/AuthContext'
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import {
-  Users, Plus, Edit, Trash2, Search, Filter, Eye,
-  UserPlus, Shield, AlertCircle, CheckCircle, X
-} from 'lucide-react'
-import { userAPI } from '../../services/api'
-import CreateUserModal from './CreateUserModal'
-import EditUserModal from './EditUserModal'
-import DeleteConfirmModal from './DeleteConfirmModal'
+  Users,
+  Plus,
+  Edit,
+  Trash2,
+  Search,
+  Filter,
+  Eye,
+  UserPlus,
+  Shield,
+  AlertCircle,
+  CheckCircle,
+  X,
+} from 'lucide-react';
+import { userAPI } from '../../services/api';
+import CreateUserModal from './CreateUserModal';
+import EditUserModal from './EditUserModal';
+import DeleteConfirmModal from './DeleteConfirmModal';
 
 function UserManagement() {
-  const { user, hasRole } = useAuth()
-  const [users, setUsers] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const { user, hasRole } = useAuth();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
     search: '',
     role: 'all',
     isActive: 'all',
     sortBy: 'createdAt',
-    sortOrder: 'desc'
-  })
+    sortOrder: 'desc',
+  });
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
     totalCount: 0,
-    limit: 10
-  })
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [editingUser, setEditingUser] = useState(null)
-  const [deletingUser, setDeletingUser] = useState(null)
+    limit: 10,
+  });
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [deletingUser, setDeletingUser] = useState(null);
 
   // Only allow admin access
   if (!hasRole('admin')) {
@@ -41,106 +51,110 @@ function UserManagement() {
           <p>You need administrator privileges to access user management.</p>
         </div>
       </div>
-    )
+    );
   }
 
   useEffect(() => {
-    fetchUsers()
-  }, [filters, pagination.currentPage])
+    fetchUsers();
+  }, [filters, pagination.currentPage]);
 
   const fetchUsers = async () => {
     try {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
 
       const params = {
         page: pagination.currentPage,
         limit: pagination.limit,
-        ...filters
-      }
+        ...filters,
+      };
 
       // Remove 'all' values
-      Object.keys(params).forEach(key => {
+      Object.keys(params).forEach((key) => {
         if (params[key] === 'all') {
-          delete params[key]
+          delete params[key];
         }
-      })
+      });
 
-      const response = await userAPI.getAll(params)
+      const response = await userAPI.getAll(params);
 
       if (response.success) {
-        setUsers(response.data)
-        setPagination(prev => ({
+        setUsers(response.data);
+        setPagination((prev) => ({
           ...prev,
-          ...response.pagination
-        }))
+          ...response.pagination,
+        }));
       }
     } catch (error) {
-      console.error('Error fetching users:', error)
-      setError(error.response?.data?.message || 'Failed to fetch users')
+      console.error('Error fetching users:', error);
+      setError(error.response?.data?.message || 'Failed to fetch users');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }))
-    setPagination(prev => ({ ...prev, currentPage: 1 }))
-  }
+    setFilters((prev) => ({ ...prev, [key]: value }));
+    setPagination((prev) => ({ ...prev, currentPage: 1 }));
+  };
 
   const handleCreateUser = async (userData) => {
     try {
-      const response = await userAPI.create(userData)
+      const response = await userAPI.create(userData);
 
       if (response.success) {
-        fetchUsers()
-        setShowCreateModal(false)
+        fetchUsers();
+        setShowCreateModal(false);
         // Show success message
       }
     } catch (error) {
-      console.error('Error creating user:', error)
-      throw error
+      console.error('Error creating user:', error);
+      throw error;
     }
-  }
+  };
 
   const handleUpdateUser = async (userId, userData) => {
     try {
-      const response = await userAPI.update(userId, userData)
+      const response = await userAPI.update(userId, userData);
 
       if (response.success) {
-        fetchUsers()
-        setEditingUser(null)
+        fetchUsers();
+        setEditingUser(null);
         // Show success message
       }
     } catch (error) {
-      console.error('Error updating user:', error)
-      throw error
+      console.error('Error updating user:', error);
+      throw error;
     }
-  }
+  };
 
   const handleDeleteUser = async (userId) => {
     try {
-      const response = await userAPI.delete(userId)
+      const response = await userAPI.delete(userId);
 
       if (response.success) {
-        fetchUsers()
-        setDeletingUser(null)
+        fetchUsers();
+        setDeletingUser(null);
         // Show success message
       }
     } catch (error) {
-      console.error('Error deleting user:', error)
-      setError(error.response?.data?.message || 'Failed to delete user')
+      console.error('Error deleting user:', error);
+      setError(error.response?.data?.message || 'Failed to delete user');
     }
-  }
+  };
 
   const getRoleBadgeClass = (role) => {
     switch (role) {
-      case 'admin': return 'role-admin'
-      case 'manager': return 'role-manager'
-      case 'user': return 'role-user'
-      default: return 'role-user'
+      case 'admin':
+        return 'role-admin';
+      case 'manager':
+        return 'role-manager';
+      case 'user':
+        return 'role-user';
+      default:
+        return 'role-user';
     }
-  }
+  };
 
   if (loading && users.length === 0) {
     return (
@@ -148,7 +162,7 @@ function UserManagement() {
         <Users size={48} className="loading-icon" />
         <h3>Loading Users...</h3>
       </div>
-    )
+    );
   }
 
   return (
@@ -161,10 +175,7 @@ function UserManagement() {
           </h1>
           <p>Manage system users and their permissions</p>
         </div>
-        <button 
-          onClick={() => setShowCreateModal(true)}
-          className="btn btn-primary"
-        >
+        <button onClick={() => setShowCreateModal(true)} className="btn btn-primary">
           <UserPlus size={16} />
           Add User
         </button>
@@ -193,10 +204,7 @@ function UserManagement() {
         </div>
 
         <div className="filter-controls">
-          <select
-            value={filters.role}
-            onChange={(e) => handleFilterChange('role', e.target.value)}
-          >
+          <select value={filters.role} onChange={(e) => handleFilterChange('role', e.target.value)}>
             <option value="all">All Roles</option>
             <option value="admin">Admin</option>
             <option value="manager">Manager</option>
@@ -215,8 +223,8 @@ function UserManagement() {
           <select
             value={`${filters.sortBy}-${filters.sortOrder}`}
             onChange={(e) => {
-              const [sortBy, sortOrder] = e.target.value.split('-')
-              setFilters(prev => ({ ...prev, sortBy, sortOrder }))
+              const [sortBy, sortOrder] = e.target.value.split('-');
+              setFilters((prev) => ({ ...prev, sortBy, sortOrder }));
             }}
           >
             <option value="createdAt-desc">Newest First</option>
@@ -243,12 +251,13 @@ function UserManagement() {
           </div>
 
           <div className="table-body">
-            {users.map(userItem => (
+            {users.map((userItem) => (
               <div key={userItem._id} className="table-row">
                 <div className="table-cell">
                   <div className="user-info">
                     <div className="user-avatar">
-                      {userItem.firstName?.[0]}{userItem.lastName?.[0]}
+                      {userItem.firstName?.[0]}
+                      {userItem.lastName?.[0]}
                     </div>
                     <div className="user-details">
                       <div className="user-name">
@@ -265,9 +274,7 @@ function UserManagement() {
                   </span>
                 </div>
 
-                <div className="table-cell">
-                  {userItem.department || '-'}
-                </div>
+                <div className="table-cell">{userItem.department || '-'}</div>
 
                 <div className="table-cell">
                   <span className={`status-badge ${userItem.isActive ? 'active' : 'inactive'}`}>
@@ -276,21 +283,15 @@ function UserManagement() {
                 </div>
 
                 <div className="table-cell">
-                  {userItem.lastLogin ? 
-                    new Date(userItem.lastLogin).toLocaleDateString() : 
-                    'Never'
-                  }
+                  {userItem.lastLogin ? new Date(userItem.lastLogin).toLocaleDateString() : 'Never'}
                 </div>
 
                 <div className="table-cell">
                   <div className="action-buttons">
-                    <button 
-                      className="action-btn view-btn"
-                      title="View Details"
-                    >
+                    <button className="action-btn view-btn" title="View Details">
                       <Eye size={16} />
                     </button>
-                    <button 
+                    <button
                       className="action-btn edit-btn"
                       onClick={() => setEditingUser(userItem)}
                       title="Edit User"
@@ -298,7 +299,7 @@ function UserManagement() {
                       <Edit size={16} />
                     </button>
                     {userItem._id !== user.id && (
-                      <button 
+                      <button
                         className="action-btn delete-btn"
                         onClick={() => setDeletingUser(userItem)}
                         title="Delete User"
@@ -325,21 +326,25 @@ function UserManagement() {
       {/* Pagination */}
       {pagination.totalPages > 1 && (
         <div className="pagination">
-          <button 
-            onClick={() => setPagination(prev => ({ ...prev, currentPage: prev.currentPage - 1 }))}
+          <button
+            onClick={() =>
+              setPagination((prev) => ({ ...prev, currentPage: prev.currentPage - 1 }))
+            }
             disabled={pagination.currentPage === 1}
             className="btn btn-secondary"
           >
             Previous
           </button>
-          
+
           <span className="pagination-info">
-            Page {pagination.currentPage} of {pagination.totalPages} 
-            ({pagination.totalCount} total users)
+            Page {pagination.currentPage} of {pagination.totalPages}({pagination.totalCount} total
+            users)
           </span>
-          
-          <button 
-            onClick={() => setPagination(prev => ({ ...prev, currentPage: prev.currentPage + 1 }))}
+
+          <button
+            onClick={() =>
+              setPagination((prev) => ({ ...prev, currentPage: prev.currentPage + 1 }))
+            }
             disabled={pagination.currentPage === pagination.totalPages}
             className="btn btn-secondary"
           >
@@ -369,7 +374,7 @@ function UserManagement() {
         user={deletingUser}
       />
     </div>
-  )
+  );
 }
 
-export default UserManagement
+export default UserManagement;

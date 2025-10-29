@@ -1,7 +1,17 @@
-import { useState, useEffect } from 'react'
-import { Package, Ship, MapPin, TrendingUp, Calendar, AlertTriangle, Clock, BarChart3, Download } from 'lucide-react'
-import RealTimeDashboard from './realtime/RealTimeDashboard'
-import RealTimeShipmentList from './realtime/RealTimeShipmentList'
+import { useState, useEffect } from 'react';
+import {
+  Package,
+  Ship,
+  MapPin,
+  TrendingUp,
+  Calendar,
+  AlertTriangle,
+  Clock,
+  BarChart3,
+  Download,
+} from 'lucide-react';
+import RealTimeDashboard from './realtime/RealTimeDashboard';
+import RealTimeShipmentList from './realtime/RealTimeShipmentList';
 import {
   PieChart,
   Pie,
@@ -17,77 +27,77 @@ import {
   LineChart,
   Line,
   Area,
-  AreaChart
-} from 'recharts'
-import { format, subDays, startOfDay, endOfDay, isWithinInterval } from 'date-fns'
-import { shipmentAPI } from '../services/api'
-import exportService from '../services/exportService'
+  AreaChart,
+} from 'recharts';
+import { format, subDays, startOfDay, endOfDay, isWithinInterval } from 'date-fns';
+import { shipmentAPI } from '../services/api';
+import exportService from '../services/exportService';
 
 function Dashboard({ shipments }) {
-  const [stats, setStats] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Calculate basic statistics
-  const totalShipments = shipments.length
-  const inTransitShipments = shipments.filter(s => s.status === 'In Transit').length
-  const deliveredShipments = shipments.filter(s => s.status === 'Delivered').length
-  const pendingShipments = shipments.filter(s => s.status === 'Pending').length
-  const cancelledShipments = shipments.filter(s => s.status === 'Cancelled').length
+  const totalShipments = shipments.length;
+  const inTransitShipments = shipments.filter((s) => s.status === 'In Transit').length;
+  const deliveredShipments = shipments.filter((s) => s.status === 'Delivered').length;
+  const pendingShipments = shipments.filter((s) => s.status === 'Pending').length;
+  const cancelledShipments = shipments.filter((s) => s.status === 'Cancelled').length;
 
   // Calculate overdue shipments
-  const overdueShipments = shipments.filter(s => {
-    const deliveryDate = new Date(s.estimatedDelivery)
-    const today = new Date()
-    return deliveryDate < today && (s.status === 'Pending' || s.status === 'In Transit')
-  }).length
+  const overdueShipments = shipments.filter((s) => {
+    const deliveryDate = new Date(s.estimatedDelivery);
+    const today = new Date();
+    return deliveryDate < today && (s.status === 'Pending' || s.status === 'In Transit');
+  }).length;
 
   // Fetch enhanced statistics from API
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        setLoading(true)
-        const response = await shipmentAPI.getStats()
-        setStats(response.data)
+        setLoading(true);
+        const response = await shipmentAPI.getStats();
+        setStats(response.data);
       } catch (error) {
-        console.error('Failed to fetch stats:', error)
+        console.error('Failed to fetch stats:', error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchStats()
-  }, [])
+    fetchStats();
+  }, []);
 
   // Prepare data for charts
   const statusData = [
     { name: 'Pending', value: pendingShipments, color: '#ef4444' },
     { name: 'In Transit', value: inTransitShipments, color: '#f59e0b' },
     { name: 'Delivered', value: deliveredShipments, color: '#10b981' },
-    { name: 'Cancelled', value: cancelledShipments, color: '#6b7280' }
-  ]
+    { name: 'Cancelled', value: cancelledShipments, color: '#6b7280' },
+  ];
 
   // Prepare timeline data for the last 7 days
-  const timelineData = []
+  const timelineData = [];
   for (let i = 6; i >= 0; i--) {
-    const date = subDays(new Date(), i)
-    const dayStart = startOfDay(date)
-    const dayEnd = endOfDay(date)
+    const date = subDays(new Date(), i);
+    const dayStart = startOfDay(date);
+    const dayEnd = endOfDay(date);
 
-    const dayShipments = shipments.filter(s => {
-      const createdDate = new Date(s.createdAt || s.estimatedDelivery)
-      return isWithinInterval(createdDate, { start: dayStart, end: dayEnd })
-    })
+    const dayShipments = shipments.filter((s) => {
+      const createdDate = new Date(s.createdAt || s.estimatedDelivery);
+      return isWithinInterval(createdDate, { start: dayStart, end: dayEnd });
+    });
 
     timelineData.push({
       date: format(date, 'MMM dd'),
       created: dayShipments.length,
-      delivered: dayShipments.filter(s => s.status === 'Delivered').length
-    })
+      delivered: dayShipments.filter((s) => s.status === 'Delivered').length,
+    });
   }
 
   // Calculate delivery performance
-  const deliveryRate = totalShipments > 0 ?
-    ((deliveredShipments / totalShipments) * 100).toFixed(1) : 0
+  const deliveryRate =
+    totalShipments > 0 ? ((deliveredShipments / totalShipments) * 100).toFixed(1) : 0;
 
   const statCards = [
     {
@@ -96,7 +106,7 @@ function Dashboard({ shipments }) {
       icon: Package,
       color: 'blue',
       change: stats?.performance?.recentShipments || 0,
-      changeLabel: 'This week'
+      changeLabel: 'This week',
     },
     {
       title: 'In Transit',
@@ -104,7 +114,7 @@ function Dashboard({ shipments }) {
       icon: Ship,
       color: 'orange',
       change: null,
-      changeLabel: 'Active'
+      changeLabel: 'Active',
     },
     {
       title: 'Delivered',
@@ -112,7 +122,7 @@ function Dashboard({ shipments }) {
       icon: MapPin,
       color: 'green',
       change: `${deliveryRate}%`,
-      changeLabel: 'Success rate'
+      changeLabel: 'Success rate',
     },
     {
       title: 'Overdue',
@@ -120,36 +130,39 @@ function Dashboard({ shipments }) {
       icon: AlertTriangle,
       color: 'red',
       change: null,
-      changeLabel: 'Need attention'
-    }
-  ]
+      changeLabel: 'Need attention',
+    },
+  ];
 
   const recentShipments = shipments
-    .sort((a, b) => new Date(b.createdAt || b.estimatedDelivery) - new Date(a.createdAt || a.estimatedDelivery))
-    .slice(0, 5)
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt || b.estimatedDelivery) - new Date(a.createdAt || a.estimatedDelivery)
+    )
+    .slice(0, 5);
 
   const handleQuickExport = (format) => {
-    const filename = `dashboard_report_${format}`
-    let result
+    const filename = `dashboard_report_${format}`;
+    let result;
 
     switch (format) {
       case 'csv':
-        result = exportService.exportToCSV(shipments, filename)
-        break
+        result = exportService.exportToCSV(shipments, filename);
+        break;
       case 'pdf':
-        result = exportService.exportToPDF(shipments, filename)
-        break
+        result = exportService.exportToPDF(shipments, filename);
+        break;
       case 'detailed':
-        result = exportService.exportDetailedReport(shipments, filename)
-        break
+        result = exportService.exportDetailedReport(shipments, filename);
+        break;
       default:
-        return
+        return;
     }
 
     if (!result.success) {
-      console.error('Export failed:', result.message)
+      console.error('Export failed:', result.message);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -159,7 +172,7 @@ function Dashboard({ shipments }) {
           <h3>Loading Analytics...</h3>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -173,10 +186,7 @@ function Dashboard({ shipments }) {
             <span>Last updated: {format(new Date(), 'MMM dd, HH:mm')}</span>
           </div>
           <div className="quick-export">
-            <button
-              onClick={() => handleQuickExport('pdf')}
-              className="btn btn-secondary btn-sm"
-            >
+            <button onClick={() => handleQuickExport('pdf')} className="btn btn-secondary btn-sm">
               <Download size={14} />
               Export Report
             </button>
@@ -289,25 +299,34 @@ function Dashboard({ shipments }) {
         </div>
         <div className="shipment-cards">
           {recentShipments.length > 0 ? (
-            recentShipments.map(shipment => {
-              const shipmentId = shipment._id || shipment.id
+            recentShipments.map((shipment) => {
+              const shipmentId = shipment._id || shipment.id;
               return (
                 <div key={shipmentId} className="shipment-card">
                   <div className="shipment-header">
                     <h4>{shipment.trackingNumber}</h4>
-                    <span className={`status status-${shipment.status.toLowerCase().replace(' ', '-')}`}>
+                    <span
+                      className={`status status-${shipment.status.toLowerCase().replace(' ', '-')}`}
+                    >
                       {shipment.status}
                     </span>
                   </div>
                   <div className="shipment-details">
-                    <p><strong>From:</strong> {shipment.origin}</p>
-                    <p><strong>To:</strong> {shipment.destination}</p>
-                    <p><strong>Cargo:</strong> {shipment.cargo}</p>
-                    <p><strong>ETA:</strong> {
-                      shipment.estimatedDelivery ?
-                        format(new Date(shipment.estimatedDelivery), 'MMM dd, yyyy') :
-                        'Not set'
-                    }</p>
+                    <p>
+                      <strong>From:</strong> {shipment.origin}
+                    </p>
+                    <p>
+                      <strong>To:</strong> {shipment.destination}
+                    </p>
+                    <p>
+                      <strong>Cargo:</strong> {shipment.cargo}
+                    </p>
+                    <p>
+                      <strong>ETA:</strong>{' '}
+                      {shipment.estimatedDelivery
+                        ? format(new Date(shipment.estimatedDelivery), 'MMM dd, yyyy')
+                        : 'Not set'}
+                    </p>
                   </div>
                   {shipment.priority && (
                     <div className={`priority-badge priority-${shipment.priority.toLowerCase()}`}>
@@ -315,7 +334,7 @@ function Dashboard({ shipments }) {
                     </div>
                   )}
                 </div>
-              )
+              );
             })
           ) : (
             <div className="empty-state">
@@ -333,7 +352,7 @@ function Dashboard({ shipments }) {
       {/* Real-time Shipment List */}
       <RealTimeShipmentList />
     </div>
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;

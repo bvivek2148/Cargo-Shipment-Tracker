@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { X, UserPlus, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { useState } from 'react';
+import { X, UserPlus, Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 function CreateUserModal({ isOpen, onClose, onSubmit }) {
   const [formData, setFormData] = useState({
@@ -9,75 +9,75 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
     password: '',
     role: 'user',
     department: '',
-    phone: ''
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [errors, setErrors] = useState({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+    phone: '',
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
+    const { name, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
-    
+      [name]: value,
+    }));
+
     // Clear field error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
-      }))
+        [name]: '',
+      }));
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required'
+      newErrors.firstName = 'First name is required';
     }
 
     if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required'
+      newErrors.lastName = 'Last name is required';
     }
 
     if (!formData.email) {
-      newErrors.email = 'Email is required'
+      newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid'
+      newErrors.email = 'Email is invalid';
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required'
+      newErrors.password = 'Password is required';
     } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters'
+      newErrors.password = 'Password must be at least 8 characters';
     }
 
     if (formData.phone && !/^[\+]?[1-9][\d]{0,15}$/.test(formData.phone)) {
-      newErrors.phone = 'Please enter a valid phone number'
+      newErrors.phone = 'Please enter a valid phone number';
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    if (!validateForm()) return
+    e.preventDefault();
 
-    setIsSubmitting(true)
-    
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+
     try {
-      await onSubmit(formData)
-      handleClose()
+      await onSubmit(formData);
+      handleClose();
     } catch (error) {
-      setErrors({ submit: error.message })
+      setErrors({ submit: error.message });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleClose = () => {
     setFormData({
@@ -87,14 +87,14 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
       password: '',
       role: 'user',
       department: '',
-      phone: ''
-    })
-    setErrors({})
-    setIsSubmitting(false)
-    onClose()
-  }
+      phone: '',
+    });
+    setErrors({});
+    setIsSubmitting(false);
+    onClose();
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="modal-overlay">
@@ -129,9 +129,7 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
                 className={errors.firstName ? 'error' : ''}
                 placeholder="Enter first name"
               />
-              {errors.firstName && (
-                <span className="error-message">{errors.firstName}</span>
-              )}
+              {errors.firstName && <span className="error-message">{errors.firstName}</span>}
             </div>
 
             <div className="form-group">
@@ -145,9 +143,7 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
                 className={errors.lastName ? 'error' : ''}
                 placeholder="Enter last name"
               />
-              {errors.lastName && (
-                <span className="error-message">{errors.lastName}</span>
-              )}
+              {errors.lastName && <span className="error-message">{errors.lastName}</span>}
             </div>
           </div>
 
@@ -162,9 +158,7 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
               className={errors.email ? 'error' : ''}
               placeholder="Enter email address"
             />
-            {errors.email && (
-              <span className="error-message">{errors.email}</span>
-            )}
+            {errors.email && <span className="error-message">{errors.email}</span>}
           </div>
 
           <div className="form-group">
@@ -187,20 +181,13 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
-            {errors.password && (
-              <span className="error-message">{errors.password}</span>
-            )}
+            {errors.password && <span className="error-message">{errors.password}</span>}
           </div>
 
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="role">Role *</label>
-              <select
-                id="role"
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-              >
+              <select id="role" name="role" value={formData.role} onChange={handleChange}>
                 <option value="user">User</option>
                 <option value="manager">Manager</option>
                 <option value="admin">Admin</option>
@@ -231,9 +218,7 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
               className={errors.phone ? 'error' : ''}
               placeholder="e.g., +1234567890"
             />
-            {errors.phone && (
-              <span className="error-message">{errors.phone}</span>
-            )}
+            {errors.phone && <span className="error-message">{errors.phone}</span>}
           </div>
 
           <div className="modal-actions">
@@ -245,11 +230,7 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={isSubmitting}
-            >
+            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
               <UserPlus size={16} />
               {isSubmitting ? 'Creating...' : 'Create User'}
             </button>
@@ -257,7 +238,7 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-export default CreateUserModal
+export default CreateUserModal;

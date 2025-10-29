@@ -1,13 +1,13 @@
-import { useState } from 'react'
-import { FileText, Smartphone, Cloud, Download, Upload, Eye, Settings } from 'lucide-react'
-import DocumentManager from './documents/DocumentManager'
-import DocumentViewer from './documents/DocumentViewer'
-import MobileFeatures from './mobile/MobileFeatures'
+import { useState } from 'react';
+import { FileText, Smartphone, Cloud, Download, Upload, Eye, Settings } from 'lucide-react';
+import DocumentManager from './documents/DocumentManager';
+import DocumentViewer from './documents/DocumentViewer';
+import MobileFeatures from './mobile/MobileFeatures';
 
 function Phase5Demo() {
-  const [activeTab, setActiveTab] = useState('documents')
-  const [selectedDocument, setSelectedDocument] = useState(null)
-  const [isViewerOpen, setIsViewerOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState('documents');
+  const [selectedDocument, setSelectedDocument] = useState(null);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
 
   // Sample documents for demo
   const sampleDocuments = [
@@ -28,18 +28,18 @@ function Phase5Demo() {
       thumbnail: '/thumbnails/bill-of-lading-cst001.jpg',
       isStarred: true,
       lastViewed: new Date('2024-01-12T14:20:00'),
-      viewCount: 5
-    }
-  ]
+      viewCount: 5,
+    },
+  ];
 
   const handleDocumentView = (document) => {
-    setSelectedDocument(document)
-    setIsViewerOpen(true)
-  }
+    setSelectedDocument(document);
+    setIsViewerOpen(true);
+  };
 
   const handleDocumentUpdate = (documents) => {
-    console.log('Documents updated:', documents)
-  }
+    console.log('Documents updated:', documents);
+  };
 
   return (
     <div className="phase5-demo">
@@ -56,7 +56,10 @@ function Phase5Demo() {
           </div>
           <div className="feature-content">
             <h3>Document Management</h3>
-            <p>Upload, organize, and manage shipping documents with version control and preview capabilities</p>
+            <p>
+              Upload, organize, and manage shipping documents with version control and preview
+              capabilities
+            </p>
             <ul>
               <li>Drag & drop file upload</li>
               <li>Document categorization</li>
@@ -104,21 +107,21 @@ function Phase5Demo() {
 
       {/* Demo Tabs */}
       <div className="demo-tabs">
-        <button 
+        <button
           className={`tab-button ${activeTab === 'documents' ? 'active' : ''}`}
           onClick={() => setActiveTab('documents')}
         >
           <FileText size={16} />
           Document Manager
         </button>
-        <button 
+        <button
           className={`tab-button ${activeTab === 'mobile' ? 'active' : ''}`}
           onClick={() => setActiveTab('mobile')}
         >
           <Smartphone size={16} />
           Mobile Features
         </button>
-        <button 
+        <button
           className={`tab-button ${activeTab === 'pwa' ? 'active' : ''}`}
           onClick={() => setActiveTab('pwa')}
         >
@@ -134,7 +137,7 @@ function Phase5Demo() {
             <div className="demo-section">
               <h3>📁 Document Management System</h3>
               <p>Upload, organize, and manage all your shipping documents in one place</p>
-              
+
               <div className="demo-features">
                 <div className="demo-feature">
                   <Upload size={20} />
@@ -155,7 +158,7 @@ function Phase5Demo() {
               </div>
             </div>
 
-            <DocumentManager 
+            <DocumentManager
               shipmentId="CST001"
               documents={sampleDocuments}
               onDocumentUpdate={handleDocumentUpdate}
@@ -290,7 +293,7 @@ function Phase5Demo() {
       </div>
 
       {/* Document Viewer Modal */}
-      <DocumentViewer 
+      <DocumentViewer
         document={selectedDocument}
         isOpen={isViewerOpen}
         onClose={() => setIsViewerOpen(false)}
@@ -301,7 +304,7 @@ function Phase5Demo() {
       <div className="phase5-summary">
         <h3>🎉 Phase 5 Complete!</h3>
         <p>The Cargo Shipment Tracker now includes:</p>
-        
+
         <div className="summary-grid">
           <div className="summary-item">
             <h4>📄 Document Management</h4>
@@ -313,7 +316,7 @@ function Phase5Demo() {
               <li>Search & filtering capabilities</li>
             </ul>
           </div>
-          
+
           <div className="summary-item">
             <h4>📱 Progressive Web App</h4>
             <ul>
@@ -324,7 +327,7 @@ function Phase5Demo() {
               <li>Native app-like experience</li>
             </ul>
           </div>
-          
+
           <div className="summary-item">
             <h4>🔄 Offline Capabilities</h4>
             <ul>
@@ -338,7 +341,7 @@ function Phase5Demo() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Phase5Demo
+export default Phase5Demo;

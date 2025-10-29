@@ -1,88 +1,87 @@
-import { useState, useRef, useEffect } from 'react'
-import { Bell, X, Check, CheckCheck, Trash2, Settings } from 'lucide-react'
-import { useSocket } from '../../contexts/SocketContext'
+import { useState, useRef, useEffect } from 'react';
+import { Bell, X, Check, CheckCheck, Trash2, Settings } from 'lucide-react';
+import { useSocket } from '../../contexts/SocketContext';
 
 function NotificationCenter() {
-  const { notifications, unreadCount, markNotificationAsRead, markAllAsRead, clearNotifications } = useSocket()
-  const [isOpen, setIsOpen] = useState(false)
-  const [filter, setFilter] = useState('all') // all, unread, shipments, system
-  const dropdownRef = useRef(null)
+  const { notifications, unreadCount, markNotificationAsRead, markAllAsRead, clearNotifications } =
+    useSocket();
+  const [isOpen, setIsOpen] = useState(false);
+  const [filter, setFilter] = useState('all'); // all, unread, shipments, system
+  const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false)
+        setIsOpen(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const getNotificationIcon = (type) => {
     switch (type) {
       case 'shipment_created':
-        return '📦'
+        return '📦';
       case 'shipment_updated':
-        return '🔄'
+        return '🔄';
       case 'shipment_delivered':
-        return '✅'
+        return '✅';
       case 'system_alert':
-        return '⚠️'
+        return '⚠️';
       case 'user_mention':
-        return '👤'
+        return '👤';
       default:
-        return '🔔'
+        return '🔔';
     }
-  }
+  };
 
   const getNotificationColor = (type, priority) => {
-    if (priority === 'high') return 'notification-high'
-    if (priority === 'medium') return 'notification-medium'
-    
+    if (priority === 'high') return 'notification-high';
+    if (priority === 'medium') return 'notification-medium';
+
     switch (type) {
       case 'shipment_delivered':
-        return 'notification-success'
+        return 'notification-success';
       case 'system_alert':
-        return 'notification-warning'
+        return 'notification-warning';
       case 'shipment_created':
-        return 'notification-info'
+        return 'notification-info';
       default:
-        return 'notification-default'
+        return 'notification-default';
     }
-  }
+  };
 
-  const filteredNotifications = notifications.filter(notification => {
-    if (filter === 'unread') return !notification.read
-    if (filter === 'shipments') return notification.type.startsWith('shipment')
-    if (filter === 'system') return notification.type.startsWith('system')
-    return true
-  })
+  const filteredNotifications = notifications.filter((notification) => {
+    if (filter === 'unread') return !notification.read;
+    if (filter === 'shipments') return notification.type.startsWith('shipment');
+    if (filter === 'system') return notification.type.startsWith('system');
+    return true;
+  });
 
   const formatTime = (timestamp) => {
-    const now = new Date()
-    const time = new Date(timestamp)
-    const diffInMinutes = Math.floor((now - time) / (1000 * 60))
-    
-    if (diffInMinutes < 1) return 'Just now'
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`
-    return time.toLocaleDateString()
-  }
+    const now = new Date();
+    const time = new Date(timestamp);
+    const diffInMinutes = Math.floor((now - time) / (1000 * 60));
+
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+    return time.toLocaleDateString();
+  };
 
   return (
     <div className="notification-center" ref={dropdownRef}>
-      <button 
+      <button
         className={`notification-bell ${unreadCount > 0 ? 'has-notifications' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
         title="Notifications"
       >
         <Bell size={20} />
         {unreadCount > 0 && (
-          <span className="notification-badge">
-            {unreadCount > 99 ? '99+' : unreadCount}
-          </span>
+          <span className="notification-badge">{unreadCount > 99 ? '99+' : unreadCount}</span>
         )}
       </button>
 
@@ -92,51 +91,39 @@ function NotificationCenter() {
             <h3>Notifications</h3>
             <div className="notification-actions">
               {unreadCount > 0 && (
-                <button 
-                  onClick={markAllAsRead}
-                  className="action-btn"
-                  title="Mark all as read"
-                >
+                <button onClick={markAllAsRead} className="action-btn" title="Mark all as read">
                   <CheckCheck size={16} />
                 </button>
               )}
-              <button 
-                onClick={clearNotifications}
-                className="action-btn"
-                title="Clear all"
-              >
+              <button onClick={clearNotifications} className="action-btn" title="Clear all">
                 <Trash2 size={16} />
               </button>
-              <button 
-                onClick={() => setIsOpen(false)}
-                className="action-btn"
-                title="Close"
-              >
+              <button onClick={() => setIsOpen(false)} className="action-btn" title="Close">
                 <X size={16} />
               </button>
             </div>
           </div>
 
           <div className="notification-filters">
-            <button 
+            <button
               className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
               onClick={() => setFilter('all')}
             >
               All
             </button>
-            <button 
+            <button
               className={`filter-btn ${filter === 'unread' ? 'active' : ''}`}
               onClick={() => setFilter('unread')}
             >
-              Unread ({notifications.filter(n => !n.read).length})
+              Unread ({notifications.filter((n) => !n.read).length})
             </button>
-            <button 
+            <button
               className={`filter-btn ${filter === 'shipments' ? 'active' : ''}`}
               onClick={() => setFilter('shipments')}
             >
               Shipments
             </button>
-            <button 
+            <button
               className={`filter-btn ${filter === 'system' ? 'active' : ''}`}
               onClick={() => setFilter('system')}
             >
@@ -152,33 +139,27 @@ function NotificationCenter() {
                 <span>You're all caught up!</span>
               </div>
             ) : (
-              filteredNotifications.map(notification => (
-                <div 
+              filteredNotifications.map((notification) => (
+                <div
                   key={notification.id}
                   className={`notification-item ${!notification.read ? 'unread' : ''} ${getNotificationColor(notification.type, notification.priority)}`}
                   onClick={() => markNotificationAsRead(notification.id)}
                 >
-                  <div className="notification-icon">
-                    {getNotificationIcon(notification.type)}
-                  </div>
+                  <div className="notification-icon">{getNotificationIcon(notification.type)}</div>
                   <div className="notification-content">
                     <div className="notification-title">
                       {notification.title}
                       {!notification.read && <span className="unread-dot"></span>}
                     </div>
-                    <div className="notification-message">
-                      {notification.message}
-                    </div>
-                    <div className="notification-time">
-                      {formatTime(notification.timestamp)}
-                    </div>
+                    <div className="notification-message">{notification.message}</div>
+                    <div className="notification-time">{formatTime(notification.timestamp)}</div>
                   </div>
                   {!notification.read && (
-                    <button 
+                    <button
                       className="mark-read-btn"
                       onClick={(e) => {
-                        e.stopPropagation()
-                        markNotificationAsRead(notification.id)
+                        e.stopPropagation();
+                        markNotificationAsRead(notification.id);
                       }}
                       title="Mark as read"
                     >
@@ -192,15 +173,13 @@ function NotificationCenter() {
 
           {filteredNotifications.length > 0 && (
             <div className="notification-footer">
-              <button className="view-all-btn">
-                View All Notifications
-              </button>
+              <button className="view-all-btn">View All Notifications</button>
             </div>
           )}
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default NotificationCenter
+export default NotificationCenter;

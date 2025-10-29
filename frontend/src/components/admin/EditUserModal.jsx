@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { X, Edit, AlertCircle } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { X, Edit, AlertCircle } from 'lucide-react';
 
 function EditUserModal({ isOpen, onClose, onSubmit, user }) {
   const [formData, setFormData] = useState({
@@ -9,10 +9,10 @@ function EditUserModal({ isOpen, onClose, onSubmit, user }) {
     role: 'user',
     department: '',
     phone: '',
-    isActive: true
-  })
-  const [errors, setErrors] = useState({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+    isActive: true,
+  });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -23,76 +23,76 @@ function EditUserModal({ isOpen, onClose, onSubmit, user }) {
         role: user.role || 'user',
         department: user.department || '',
         phone: user.phone || '',
-        isActive: user.isActive !== undefined ? user.isActive : true
-      })
+        isActive: user.isActive !== undefined ? user.isActive : true,
+      });
     }
-  }, [user])
+  }, [user]);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setFormData(prev => ({
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }))
-    
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+
     // Clear field error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
-      }))
+        [name]: '',
+      }));
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required'
+      newErrors.firstName = 'First name is required';
     }
 
     if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required'
+      newErrors.lastName = 'Last name is required';
     }
 
     if (!formData.email) {
-      newErrors.email = 'Email is required'
+      newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid'
+      newErrors.email = 'Email is invalid';
     }
 
     if (formData.phone && !/^[\+]?[1-9][\d]{0,15}$/.test(formData.phone)) {
-      newErrors.phone = 'Please enter a valid phone number'
+      newErrors.phone = 'Please enter a valid phone number';
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    if (!validateForm()) return
+    e.preventDefault();
 
-    setIsSubmitting(true)
-    
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+
     try {
-      await onSubmit(user._id, formData)
-      handleClose()
+      await onSubmit(user._id, formData);
+      handleClose();
     } catch (error) {
-      setErrors({ submit: error.message })
+      setErrors({ submit: error.message });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleClose = () => {
-    setErrors({})
-    setIsSubmitting(false)
-    onClose()
-  }
+    setErrors({});
+    setIsSubmitting(false);
+    onClose();
+  };
 
-  if (!isOpen || !user) return null
+  if (!isOpen || !user) return null;
 
   return (
     <div className="modal-overlay">
@@ -127,9 +127,7 @@ function EditUserModal({ isOpen, onClose, onSubmit, user }) {
                 className={errors.firstName ? 'error' : ''}
                 placeholder="Enter first name"
               />
-              {errors.firstName && (
-                <span className="error-message">{errors.firstName}</span>
-              )}
+              {errors.firstName && <span className="error-message">{errors.firstName}</span>}
             </div>
 
             <div className="form-group">
@@ -143,9 +141,7 @@ function EditUserModal({ isOpen, onClose, onSubmit, user }) {
                 className={errors.lastName ? 'error' : ''}
                 placeholder="Enter last name"
               />
-              {errors.lastName && (
-                <span className="error-message">{errors.lastName}</span>
-              )}
+              {errors.lastName && <span className="error-message">{errors.lastName}</span>}
             </div>
           </div>
 
@@ -160,20 +156,13 @@ function EditUserModal({ isOpen, onClose, onSubmit, user }) {
               className={errors.email ? 'error' : ''}
               placeholder="Enter email address"
             />
-            {errors.email && (
-              <span className="error-message">{errors.email}</span>
-            )}
+            {errors.email && <span className="error-message">{errors.email}</span>}
           </div>
 
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="role">Role *</label>
-              <select
-                id="role"
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-              >
+              <select id="role" name="role" value={formData.role} onChange={handleChange}>
                 <option value="user">User</option>
                 <option value="manager">Manager</option>
                 <option value="admin">Admin</option>
@@ -204,9 +193,7 @@ function EditUserModal({ isOpen, onClose, onSubmit, user }) {
               className={errors.phone ? 'error' : ''}
               placeholder="e.g., +1234567890"
             />
-            {errors.phone && (
-              <span className="error-message">{errors.phone}</span>
-            )}
+            {errors.phone && <span className="error-message">{errors.phone}</span>}
           </div>
 
           <div className="form-group">
@@ -231,11 +218,7 @@ function EditUserModal({ isOpen, onClose, onSubmit, user }) {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={isSubmitting}
-            >
+            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
               <Edit size={16} />
               {isSubmitting ? 'Updating...' : 'Update User'}
             </button>
@@ -243,7 +226,7 @@ function EditUserModal({ isOpen, onClose, onSubmit, user }) {
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-export default EditUserModal
+export default EditUserModal;

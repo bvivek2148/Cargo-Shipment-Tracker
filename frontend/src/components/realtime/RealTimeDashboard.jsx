@@ -1,101 +1,101 @@
-import { useState, useEffect } from 'react'
-import { useSocket } from '../../contexts/SocketContext'
-import { Activity, TrendingUp, Package, Clock, AlertTriangle } from 'lucide-react'
-import EventSimulator from './EventSimulator'
+import { useState, useEffect } from 'react';
+import { useSocket } from '../../contexts/SocketContext';
+import { Activity, TrendingUp, Package, Clock, AlertTriangle } from 'lucide-react';
+import EventSimulator from './EventSimulator';
 
 function RealTimeDashboard() {
-  const { socket, isConnected, emitEvent } = useSocket()
+  const { socket, isConnected, emitEvent } = useSocket();
   const [liveStats, setLiveStats] = useState({
     totalShipments: 0,
     activeShipments: 0,
     deliveredToday: 0,
     pendingShipments: 0,
     delayedShipments: 0,
-    lastUpdate: new Date()
-  })
-  const [recentActivity, setRecentActivity] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
+    lastUpdate: new Date(),
+  });
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (socket && isConnected) {
-      setupRealTimeListeners()
-      requestInitialData()
+      setupRealTimeListeners();
+      requestInitialData();
     }
-  }, [socket, isConnected])
+  }, [socket, isConnected]);
 
   const setupRealTimeListeners = () => {
     // Listen for real-time statistics updates
     socket.on('stats:update', (data) => {
-      console.log('Received stats update:', data)
-      setLiveStats(prev => ({
+      console.log('Received stats update:', data);
+      setLiveStats((prev) => ({
         ...prev,
         ...data,
-        lastUpdate: new Date()
-      }))
-    })
+        lastUpdate: new Date(),
+      }));
+    });
 
     // Listen for shipment activity
     socket.on('activity:new', (activity) => {
-      console.log('New activity:', activity)
-      setRecentActivity(prev => [activity, ...prev.slice(0, 9)]) // Keep last 10 activities
-    })
+      console.log('New activity:', activity);
+      setRecentActivity((prev) => [activity, ...prev.slice(0, 9)]); // Keep last 10 activities
+    });
 
     // Listen for shipment events to update stats
     socket.on('shipment:created', (data) => {
-      setLiveStats(prev => ({
+      setLiveStats((prev) => ({
         ...prev,
         totalShipments: prev.totalShipments + 1,
         activeShipments: prev.activeShipments + 1,
-        lastUpdate: new Date()
-      }))
-      
+        lastUpdate: new Date(),
+      }));
+
       addActivity({
         id: Date.now(),
         type: 'shipment_created',
         message: `New shipment ${data.trackingNumber} created`,
         timestamp: new Date(),
-        icon: '📦'
-      })
-    })
+        icon: '📦',
+      });
+    });
 
     socket.on('shipment:delivered', (data) => {
-      setLiveStats(prev => ({
+      setLiveStats((prev) => ({
         ...prev,
         deliveredToday: prev.deliveredToday + 1,
         activeShipments: Math.max(0, prev.activeShipments - 1),
-        lastUpdate: new Date()
-      }))
-      
+        lastUpdate: new Date(),
+      }));
+
       addActivity({
         id: Date.now(),
         type: 'shipment_delivered',
         message: `Shipment ${data.trackingNumber} delivered`,
         timestamp: new Date(),
-        icon: '✅'
-      })
-    })
+        icon: '✅',
+      });
+    });
 
     socket.on('shipment:delayed', (data) => {
-      setLiveStats(prev => ({
+      setLiveStats((prev) => ({
         ...prev,
         delayedShipments: prev.delayedShipments + 1,
-        lastUpdate: new Date()
-      }))
-      
+        lastUpdate: new Date(),
+      }));
+
       addActivity({
         id: Date.now(),
         type: 'shipment_delayed',
         message: `Shipment ${data.trackingNumber} delayed`,
         timestamp: new Date(),
-        icon: '⚠️'
-      })
-    })
-  }
+        icon: '⚠️',
+      });
+    });
+  };
 
   const requestInitialData = () => {
     // Request initial dashboard data
-    emitEvent('dashboard:subscribe', { userId: 'current-user' })
-    
+    emitEvent('dashboard:subscribe', { userId: 'current-user' });
+
     // Simulate initial data for demo
     setTimeout(() => {
       setLiveStats({
@@ -104,66 +104,66 @@ function RealTimeDashboard() {
         deliveredToday: 8,
         pendingShipments: 23,
         delayedShipments: 3,
-        lastUpdate: new Date()
-      })
-      
+        lastUpdate: new Date(),
+      });
+
       setRecentActivity([
         {
           id: 1,
           type: 'shipment_delivered',
           message: 'Shipment CST001 delivered to London, UK',
           timestamp: new Date(Date.now() - 5 * 60 * 1000),
-          icon: '✅'
+          icon: '✅',
         },
         {
           id: 2,
           type: 'shipment_created',
           message: 'New shipment CST156 created from Tokyo to Paris',
           timestamp: new Date(Date.now() - 15 * 60 * 1000),
-          icon: '📦'
+          icon: '📦',
         },
         {
           id: 3,
           type: 'shipment_updated',
           message: 'Shipment CST089 status updated to In Transit',
           timestamp: new Date(Date.now() - 30 * 60 * 1000),
-          icon: '🔄'
-        }
-      ])
-      
-      setIsLoading(false)
-    }, 1000)
-  }
+          icon: '🔄',
+        },
+      ]);
+
+      setIsLoading(false);
+    }, 1000);
+  };
 
   const addActivity = (activity) => {
-    setRecentActivity(prev => [activity, ...prev.slice(0, 9)])
-  }
+    setRecentActivity((prev) => [activity, ...prev.slice(0, 9)]);
+  };
 
   const formatTime = (timestamp) => {
-    const now = new Date()
-    const time = new Date(timestamp)
-    const diffInMinutes = Math.floor((now - time) / (1000 * 60))
-    
-    if (diffInMinutes < 1) return 'Just now'
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`
-    return time.toLocaleDateString()
-  }
+    const now = new Date();
+    const time = new Date(timestamp);
+    const diffInMinutes = Math.floor((now - time) / (1000 * 60));
+
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+    return time.toLocaleDateString();
+  };
 
   const getActivityColor = (type) => {
     switch (type) {
       case 'shipment_delivered':
-        return 'activity-success'
+        return 'activity-success';
       case 'shipment_created':
-        return 'activity-info'
+        return 'activity-info';
       case 'shipment_delayed':
-        return 'activity-warning'
+        return 'activity-warning';
       case 'shipment_updated':
-        return 'activity-default'
+        return 'activity-default';
       default:
-        return 'activity-default'
+        return 'activity-default';
     }
-  }
+  };
 
   if (isLoading) {
     return (
@@ -173,7 +173,7 @@ function RealTimeDashboard() {
           <p>Loading real-time dashboard...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -183,9 +183,7 @@ function RealTimeDashboard() {
           <Activity size={24} />
           Real-time Dashboard
         </h2>
-        <div className="last-update">
-          Last updated: {formatTime(liveStats.lastUpdate)}
-        </div>
+        <div className="last-update">Last updated: {formatTime(liveStats.lastUpdate)}</div>
       </div>
 
       <div className="live-stats-grid">
@@ -261,18 +259,12 @@ function RealTimeDashboard() {
               <p>No recent activity</p>
             </div>
           ) : (
-            recentActivity.map(activity => (
+            recentActivity.map((activity) => (
               <div key={activity.id} className={`activity-item ${getActivityColor(activity.type)}`}>
-                <div className="activity-icon">
-                  {activity.icon}
-                </div>
+                <div className="activity-icon">{activity.icon}</div>
                 <div className="activity-content">
-                  <div className="activity-message">
-                    {activity.message}
-                  </div>
-                  <div className="activity-time">
-                    {formatTime(activity.timestamp)}
-                  </div>
+                  <div className="activity-message">{activity.message}</div>
+                  <div className="activity-time">{formatTime(activity.timestamp)}</div>
                 </div>
               </div>
             ))
@@ -283,7 +275,7 @@ function RealTimeDashboard() {
       {/* Event Simulator for Demo */}
       <EventSimulator />
     </div>
-  )
+  );
 }
 
-export default RealTimeDashboard
+export default RealTimeDashboard;

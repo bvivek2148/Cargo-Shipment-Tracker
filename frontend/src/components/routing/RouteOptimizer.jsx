@@ -1,115 +1,129 @@
-import { useState, useEffect } from 'react'
-import { MapContainer, TileLayer, Marker, Popup, Polyline, CircleMarker } from 'react-leaflet'
-import { Route, Navigation, MapPin, Clock, Truck, Fuel, DollarSign, Plus, X, RotateCcw } from 'lucide-react'
-import L from 'leaflet'
+import { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, CircleMarker } from 'react-leaflet';
+import {
+  Route,
+  Navigation,
+  MapPin,
+  Clock,
+  Truck,
+  Fuel,
+  DollarSign,
+  Plus,
+  X,
+  RotateCcw,
+} from 'lucide-react';
+import L from 'leaflet';
 
 // Route optimization algorithms
 const RouteOptimizer = {
   // Simple nearest neighbor algorithm for TSP
   nearestNeighbor: (waypoints) => {
-    if (waypoints.length <= 2) return waypoints
-    
-    const unvisited = [...waypoints.slice(1)] // Exclude starting point
-    const route = [waypoints[0]] // Start with origin
-    let current = waypoints[0]
-    
+    if (waypoints.length <= 2) return waypoints;
+
+    const unvisited = [...waypoints.slice(1)]; // Exclude starting point
+    const route = [waypoints[0]]; // Start with origin
+    let current = waypoints[0];
+
     while (unvisited.length > 0) {
-      let nearest = unvisited[0]
-      let nearestIndex = 0
-      let minDistance = calculateDistance(current, nearest)
-      
+      let nearest = unvisited[0];
+      let nearestIndex = 0;
+      let minDistance = calculateDistance(current, nearest);
+
       for (let i = 1; i < unvisited.length; i++) {
-        const distance = calculateDistance(current, unvisited[i])
+        const distance = calculateDistance(current, unvisited[i]);
         if (distance < minDistance) {
-          minDistance = distance
-          nearest = unvisited[i]
-          nearestIndex = i
+          minDistance = distance;
+          nearest = unvisited[i];
+          nearestIndex = i;
         }
       }
-      
-      route.push(nearest)
-      current = nearest
-      unvisited.splice(nearestIndex, 1)
+
+      route.push(nearest);
+      current = nearest;
+      unvisited.splice(nearestIndex, 1);
     }
-    
-    return route
+
+    return route;
   },
-  
+
   // 2-opt optimization
   twoOpt: (route) => {
-    let improved = true
-    let bestRoute = [...route]
-    
+    let improved = true;
+    let bestRoute = [...route];
+
     while (improved) {
-      improved = false
-      
+      improved = false;
+
       for (let i = 1; i < route.length - 2; i++) {
         for (let j = i + 1; j < route.length; j++) {
-          if (j - i === 1) continue
-          
-          const newRoute = [...route]
+          if (j - i === 1) continue;
+
+          const newRoute = [...route];
           // Reverse the segment between i and j
-          const segment = newRoute.slice(i, j + 1).reverse()
-          newRoute.splice(i, j - i + 1, ...segment)
-          
+          const segment = newRoute.slice(i, j + 1).reverse();
+          newRoute.splice(i, j - i + 1, ...segment);
+
           if (calculateTotalDistance(newRoute) < calculateTotalDistance(bestRoute)) {
-            bestRoute = [...newRoute]
-            improved = true
+            bestRoute = [...newRoute];
+            improved = true;
           }
         }
       }
-      
-      route = [...bestRoute]
+
+      route = [...bestRoute];
     }
-    
-    return bestRoute
-  }
-}
+
+    return bestRoute;
+  },
+};
 
 // Calculate distance between two points (Haversine formula)
 function calculateDistance(point1, point2) {
-  const R = 6371 // Earth's radius in km
-  const dLat = (point2.lat - point1.lat) * Math.PI / 180
-  const dLon = (point2.lng - point1.lng) * Math.PI / 180
-  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(point1.lat * Math.PI / 180) * Math.cos(point2.lat * Math.PI / 180) *
-    Math.sin(dLon/2) * Math.sin(dLon/2)
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
-  return R * c
+  const R = 6371; // Earth's radius in km
+  const dLat = ((point2.lat - point1.lat) * Math.PI) / 180;
+  const dLon = ((point2.lng - point1.lng) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((point1.lat * Math.PI) / 180) *
+      Math.cos((point2.lat * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
 }
 
 function calculateTotalDistance(route) {
-  let total = 0
+  let total = 0;
   for (let i = 0; i < route.length - 1; i++) {
-    total += calculateDistance(route[i], route[i + 1])
+    total += calculateDistance(route[i], route[i + 1]);
   }
-  return total
+  return total;
 }
 
 function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
-  const [waypoints, setWaypoints] = useState([])
-  const [optimizedRoute, setOptimizedRoute] = useState([])
-  const [isOptimizing, setIsOptimizing] = useState(false)
-  const [routeStats, setRouteStats] = useState(null)
-  const [optimizationMethod, setOptimizationMethod] = useState('nearestNeighbor')
+  const [waypoints, setWaypoints] = useState([]);
+  const [optimizedRoute, setOptimizedRoute] = useState([]);
+  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [routeStats, setRouteStats] = useState(null);
+  const [optimizationMethod, setOptimizationMethod] = useState('nearestNeighbor');
 
   // Comprehensive city coordinates database
   const cityCoordinates = {
     // USA
-    'New York, USA': { lat: 40.7128, lng: -74.0060, name: 'New York, USA' },
+    'New York, USA': { lat: 40.7128, lng: -74.006, name: 'New York, USA' },
     'Los Angeles, USA': { lat: 34.0522, lng: -118.2437, name: 'Los Angeles, USA' },
     'Miami, USA': { lat: 25.7617, lng: -80.1918, name: 'Miami, USA' },
     'Seattle, USA': { lat: 47.6062, lng: -122.3321, name: 'Seattle, USA' },
     'Houston, USA': { lat: 29.7604, lng: -95.3698, name: 'Houston, USA' },
 
     // India - Major ports and cities
-    'Mumbai, India': { lat: 19.0760, lng: 72.8777, name: 'Mumbai, India' },
+    'Mumbai, India': { lat: 19.076, lng: 72.8777, name: 'Mumbai, India' },
     'Chennai, India': { lat: 13.0827, lng: 80.2707, name: 'Chennai, India' },
     'Kolkata, India': { lat: 22.5726, lng: 88.3639, name: 'Kolkata, India' },
     'Bangalore, India': { lat: 12.9716, lng: 77.5946, name: 'Bangalore, India' },
     'Delhi, India': { lat: 28.7041, lng: 77.1025, name: 'Delhi, India' },
     'Pune, India': { lat: 18.5204, lng: 73.8567, name: 'Pune, India' },
-    'Hyderabad, India': { lat: 17.3850, lng: 78.4867, name: 'Hyderabad, India' },
+    'Hyderabad, India': { lat: 17.385, lng: 78.4867, name: 'Hyderabad, India' },
     'Kochi, India': { lat: 9.9312, lng: 76.2673, name: 'Kochi, India' },
     'Visakhapatnam, India': { lat: 17.6868, lng: 83.2185, name: 'Visakhapatnam, India' },
     'Ahmedabad, India': { lat: 23.0225, lng: 72.5714, name: 'Ahmedabad, India' },
@@ -138,7 +152,7 @@ function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
     'Kuwait City, Kuwait': { lat: 29.3759, lng: 47.9774, name: 'Kuwait City, Kuwait' },
 
     // Southeast Asia
-    'Singapore': { lat: 1.3521, lng: 103.8198, name: 'Singapore' },
+    Singapore: { lat: 1.3521, lng: 103.8198, name: 'Singapore' },
     'Bangkok, Thailand': { lat: 13.7563, lng: 100.5018, name: 'Bangkok, Thailand' },
     'Ho Chi Minh City, Vietnam': { lat: 10.8231, lng: 106.6297, name: 'Ho Chi Minh City, Vietnam' },
     'Jakarta, Indonesia': { lat: -6.2088, lng: 106.8456, name: 'Jakarta, Indonesia' },
@@ -156,7 +170,7 @@ function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
 
     // South America
     'São Paulo, Brazil': { lat: -23.5505, lng: -46.6333, name: 'São Paulo, Brazil' },
-    'Buenos Aires, Argentina': { lat: -34.6118, lng: -58.3960, name: 'Buenos Aires, Argentina' },
+    'Buenos Aires, Argentina': { lat: -34.6118, lng: -58.396, name: 'Buenos Aires, Argentina' },
     'Valparaíso, Chile': { lat: -33.0472, lng: -71.6127, name: 'Valparaíso, Chile' },
 
     // Australia/Oceania
@@ -169,89 +183,89 @@ function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
     'Colombo, Sri Lanka': { lat: 6.9271, lng: 79.8612, name: 'Colombo, Sri Lanka' },
 
     // Additional major hubs
-    'Hong Kong': { lat: 22.3193, lng: 114.1694, name: 'Hong Kong' }
-  }
+    'Hong Kong': { lat: 22.3193, lng: 114.1694, name: 'Hong Kong' },
+  };
 
   useEffect(() => {
     if (shipment) {
-      initializeRoute()
+      initializeRoute();
     }
-  }, [shipment])
+  }, [shipment]);
 
   const initializeRoute = () => {
-    const origin = cityCoordinates[shipment.origin]
-    const destination = cityCoordinates[shipment.destination]
-    
+    const origin = cityCoordinates[shipment.origin];
+    const destination = cityCoordinates[shipment.destination];
+
     if (origin && destination) {
-      const initialWaypoints = [origin, destination]
-      setWaypoints(initialWaypoints)
-      setOptimizedRoute(initialWaypoints)
-      calculateRouteStats(initialWaypoints)
+      const initialWaypoints = [origin, destination];
+      setWaypoints(initialWaypoints);
+      setOptimizedRoute(initialWaypoints);
+      calculateRouteStats(initialWaypoints);
     }
-  }
+  };
 
   const addWaypoint = (cityName) => {
-    const city = cityCoordinates[cityName]
-    if (city && !waypoints.find(w => w.name === cityName)) {
-      const newWaypoints = [...waypoints.slice(0, -1), city, waypoints[waypoints.length - 1]]
-      setWaypoints(newWaypoints)
+    const city = cityCoordinates[cityName];
+    if (city && !waypoints.find((w) => w.name === cityName)) {
+      const newWaypoints = [...waypoints.slice(0, -1), city, waypoints[waypoints.length - 1]];
+      setWaypoints(newWaypoints);
     }
-  }
+  };
 
   const removeWaypoint = (index) => {
-    if (index === 0 || index === waypoints.length - 1) return // Can't remove origin or destination
-    const newWaypoints = waypoints.filter((_, i) => i !== index)
-    setWaypoints(newWaypoints)
-    setOptimizedRoute(newWaypoints)
-    calculateRouteStats(newWaypoints)
-  }
+    if (index === 0 || index === waypoints.length - 1) return; // Can't remove origin or destination
+    const newWaypoints = waypoints.filter((_, i) => i !== index);
+    setWaypoints(newWaypoints);
+    setOptimizedRoute(newWaypoints);
+    calculateRouteStats(newWaypoints);
+  };
 
   const optimizeRoute = async () => {
-    setIsOptimizing(true)
-    
+    setIsOptimizing(true);
+
     // Simulate optimization delay
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
-    let optimized
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    let optimized;
     switch (optimizationMethod) {
       case 'nearestNeighbor':
-        optimized = RouteOptimizer.nearestNeighbor(waypoints)
-        break
+        optimized = RouteOptimizer.nearestNeighbor(waypoints);
+        break;
       case 'twoOpt':
-        const nearest = RouteOptimizer.nearestNeighbor(waypoints)
-        optimized = RouteOptimizer.twoOpt(nearest)
-        break
+        const nearest = RouteOptimizer.nearestNeighbor(waypoints);
+        optimized = RouteOptimizer.twoOpt(nearest);
+        break;
       default:
-        optimized = waypoints
+        optimized = waypoints;
     }
-    
-    setOptimizedRoute(optimized)
-    calculateRouteStats(optimized)
-    setIsOptimizing(false)
-    
+
+    setOptimizedRoute(optimized);
+    calculateRouteStats(optimized);
+    setIsOptimizing(false);
+
     if (onRouteUpdate) {
-      onRouteUpdate(optimized, routeStats)
+      onRouteUpdate(optimized, routeStats);
     }
-  }
+  };
 
   const calculateRouteStats = (route) => {
-    const totalDistance = calculateTotalDistance(route)
-    const estimatedTime = totalDistance / 50 // Assume 50 km/h average speed
-    const fuelCost = totalDistance * 0.8 // $0.8 per km
-    const estimatedCO2 = totalDistance * 2.3 // 2.3 kg CO2 per km
-    
+    const totalDistance = calculateTotalDistance(route);
+    const estimatedTime = totalDistance / 50; // Assume 50 km/h average speed
+    const fuelCost = totalDistance * 0.8; // $0.8 per km
+    const estimatedCO2 = totalDistance * 2.3; // 2.3 kg CO2 per km
+
     setRouteStats({
       totalDistance: Math.round(totalDistance),
       estimatedTime: Math.round(estimatedTime * 10) / 10,
       fuelCost: Math.round(fuelCost),
       estimatedCO2: Math.round(estimatedCO2),
-      waypoints: route.length
-    })
-  }
+      waypoints: route.length,
+    });
+  };
 
   const resetRoute = () => {
-    initializeRoute()
-  }
+    initializeRoute();
+  };
 
   if (!shipment) {
     return (
@@ -264,7 +278,7 @@ function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
           <p>Select a shipment to optimize its route</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -272,7 +286,7 @@ function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
       <div className="optimizer-header">
         <h3>🛣️ Route Optimizer</h3>
         <div className="optimizer-controls">
-          <select 
+          <select
             value={optimizationMethod}
             onChange={(e) => setOptimizationMethod(e.target.value)}
             className="method-select"
@@ -280,8 +294,8 @@ function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
             <option value="nearestNeighbor">Nearest Neighbor</option>
             <option value="twoOpt">2-Opt Optimization</option>
           </select>
-          
-          <button 
+
+          <button
             onClick={optimizeRoute}
             disabled={isOptimizing || waypoints.length < 3}
             className="btn btn-primary"
@@ -298,7 +312,7 @@ function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
               </>
             )}
           </button>
-          
+
           <button onClick={resetRoute} className="btn btn-secondary">
             <RotateCcw size={16} />
             Reset
@@ -311,41 +325,47 @@ function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
         <h4>📍 Waypoints</h4>
         <div className="waypoint-list">
           {waypoints.map((waypoint, index) => (
-            <div key={index} className={`waypoint-item ${index === 0 ? 'origin' : index === waypoints.length - 1 ? 'destination' : 'waypoint'}`}>
+            <div
+              key={index}
+              className={`waypoint-item ${index === 0 ? 'origin' : index === waypoints.length - 1 ? 'destination' : 'waypoint'}`}
+            >
               <div className="waypoint-info">
                 <span className="waypoint-number">{index + 1}</span>
                 <span className="waypoint-name">{waypoint.name}</span>
                 <span className="waypoint-type">
-                  {index === 0 ? 'Origin' : index === waypoints.length - 1 ? 'Destination' : 'Waypoint'}
+                  {index === 0
+                    ? 'Origin'
+                    : index === waypoints.length - 1
+                      ? 'Destination'
+                      : 'Waypoint'}
                 </span>
               </div>
               {index !== 0 && index !== waypoints.length - 1 && (
-                <button 
-                  onClick={() => removeWaypoint(index)}
-                  className="remove-waypoint"
-                >
+                <button onClick={() => removeWaypoint(index)} className="remove-waypoint">
                   <X size={16} />
                 </button>
               )}
             </div>
           ))}
         </div>
-        
+
         <div className="add-waypoint">
-          <select 
+          <select
             onChange={(e) => {
               if (e.target.value) {
-                addWaypoint(e.target.value)
-                e.target.value = ''
+                addWaypoint(e.target.value);
+                e.target.value = '';
               }
             }}
             className="waypoint-select"
           >
             <option value="">Add waypoint...</option>
             {Object.keys(cityCoordinates)
-              .filter(city => !waypoints.find(w => w.name === city))
-              .map(city => (
-                <option key={city} value={city}>{city}</option>
+              .filter((city) => !waypoints.find((w) => w.name === city))
+              .map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
               ))}
           </select>
         </div>
@@ -363,7 +383,7 @@ function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
                 <span className="stat-label">Total Distance</span>
               </div>
             </div>
-            
+
             <div className="stat-item">
               <Clock size={20} />
               <div>
@@ -371,7 +391,7 @@ function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
                 <span className="stat-label">Estimated Time</span>
               </div>
             </div>
-            
+
             <div className="stat-item">
               <DollarSign size={20} />
               <div>
@@ -379,7 +399,7 @@ function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
                 <span className="stat-label">Fuel Cost</span>
               </div>
             </div>
-            
+
             <div className="stat-item">
               <Truck size={20} />
               <div>
@@ -394,7 +414,7 @@ function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
       {/* Route Map */}
       <div className="route-map">
         <MapContainer
-          center={waypoints[0] ? [waypoints[0].lat, waypoints[0].lng] : [40.7128, -74.0060]}
+          center={waypoints[0] ? [waypoints[0].lat, waypoints[0].lng] : [40.7128, -74.006]}
           zoom={3}
           style={{ height: '400px', width: '100%' }}
         >
@@ -412,13 +432,19 @@ function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
                 className: 'route-marker',
                 html: `<div class="marker-number ${index === 0 ? 'origin' : index === optimizedRoute.length - 1 ? 'destination' : 'waypoint'}">${index + 1}</div>`,
                 iconSize: [30, 30],
-                iconAnchor: [15, 15]
+                iconAnchor: [15, 15],
               })}
             >
               <Popup>
                 <div>
                   <h4>{waypoint.name}</h4>
-                  <p>{index === 0 ? 'Origin' : index === optimizedRoute.length - 1 ? 'Destination' : `Waypoint ${index}`}</p>
+                  <p>
+                    {index === 0
+                      ? 'Origin'
+                      : index === optimizedRoute.length - 1
+                        ? 'Destination'
+                        : `Waypoint ${index}`}
+                  </p>
                 </div>
               </Popup>
             </Marker>
@@ -427,7 +453,7 @@ function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
           {/* Route line */}
           {optimizedRoute.length > 1 && (
             <Polyline
-              positions={optimizedRoute.map(wp => [wp.lat, wp.lng])}
+              positions={optimizedRoute.map((wp) => [wp.lat, wp.lng])}
               color="#3b82f6"
               weight={4}
               opacity={0.8}
@@ -436,7 +462,7 @@ function RouteOptimizerComponent({ shipment, onRouteUpdate }) {
         </MapContainer>
       </div>
     </div>
-  )
+  );
 }
 
-export default RouteOptimizerComponent
+export default RouteOptimizerComponent;

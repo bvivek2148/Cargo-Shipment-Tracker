@@ -1,21 +1,21 @@
-import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom'
-import { Package, Ship, Home, Plus, BarChart3 } from 'lucide-react'
-import './App.css'
+import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { Package, Ship, Home, Plus, BarChart3 } from 'lucide-react';
+import './App.css';
 
 // Notification Components
-import ToastContainer from './components/notifications/ToastContainer'
+import ToastContainer from './components/notifications/ToastContainer';
 
 // Enhanced Components
-import EnhancedShipmentDetails from './components/EnhancedShipmentDetails'
-import DashboardWithMap from './components/DashboardWithMap'
-import Phase4ShipmentDetails from './components/Phase4ShipmentDetails'
+import EnhancedShipmentDetails from './components/EnhancedShipmentDetails';
+import DashboardWithMap from './components/DashboardWithMap';
+import Phase4ShipmentDetails from './components/Phase4ShipmentDetails';
 
 // PWA Components
-import PWAManager from './components/pwa/PWAManager'
-import OfflineSync from './components/offline/OfflineSync'
-import Phase5Demo from './components/Phase5Demo'
-import Phase6Demo from './components/Phase6Demo'
+import PWAManager from './components/pwa/PWAManager';
+import OfflineSync from './components/offline/OfflineSync';
+import Phase5Demo from './components/Phase5Demo';
+import Phase6Demo from './components/Phase6Demo';
 
 // Simple Navigation Component
 function SimpleNavigation() {
@@ -25,7 +25,7 @@ function SimpleNavigation() {
         <Ship size={24} />
         <h1>Cargo Tracker</h1>
       </div>
-      
+
       <div className="nav-links">
         <Link to="/" className="nav-link">
           <Home size={18} />
@@ -41,7 +41,7 @@ function SimpleNavigation() {
         </Link>
       </div>
     </nav>
-  )
+  );
 }
 
 // Simple Dashboard Component
@@ -51,8 +51,8 @@ function SimpleDashboard() {
     pending: 23,
     inTransit: 42,
     delivered: 89,
-    delayed: 2
-  })
+    delayed: 2,
+  });
 
   return (
     <div className="dashboard">
@@ -136,7 +136,7 @@ function SimpleDashboard() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // Simple Shipment List Component
@@ -150,7 +150,7 @@ function SimpleShipmentList() {
       origin: 'Mumbai, India',
       destination: 'London, UK',
       cargo: 'Textiles & Garments',
-      estimatedDelivery: '2024-01-15'
+      estimatedDelivery: '2024-01-15',
     },
     {
       id: '2',
@@ -159,7 +159,7 @@ function SimpleShipmentList() {
       origin: 'Chennai, India',
       destination: 'New York, USA',
       cargo: 'Pharmaceuticals',
-      estimatedDelivery: '2024-01-10'
+      estimatedDelivery: '2024-01-10',
     },
     {
       id: '3',
@@ -168,7 +168,7 @@ function SimpleShipmentList() {
       origin: 'Kolkata, India',
       destination: 'Hamburg, Germany',
       cargo: 'Tea & Spices',
-      estimatedDelivery: '2024-01-18'
+      estimatedDelivery: '2024-01-18',
     },
     {
       id: '4',
@@ -177,7 +177,7 @@ function SimpleShipmentList() {
       origin: 'Bangalore, India',
       destination: 'Singapore',
       cargo: 'IT Equipment',
-      estimatedDelivery: '2024-01-20'
+      estimatedDelivery: '2024-01-20',
     },
     {
       id: '5',
@@ -186,7 +186,7 @@ function SimpleShipmentList() {
       origin: 'Delhi, India',
       destination: 'Dubai, UAE',
       cargo: 'Handicrafts',
-      estimatedDelivery: '2024-01-16'
+      estimatedDelivery: '2024-01-16',
     },
     {
       id: '6',
@@ -195,7 +195,7 @@ function SimpleShipmentList() {
       origin: 'Pune, India',
       destination: 'Sydney, Australia',
       cargo: 'Automotive Parts',
-      estimatedDelivery: '2024-01-12'
+      estimatedDelivery: '2024-01-12',
     },
     {
       id: '7',
@@ -204,7 +204,7 @@ function SimpleShipmentList() {
       origin: 'Hyderabad, India',
       destination: 'Tokyo, Japan',
       cargo: 'Software Services',
-      estimatedDelivery: '2024-01-22'
+      estimatedDelivery: '2024-01-22',
     },
     {
       id: '8',
@@ -213,7 +213,7 @@ function SimpleShipmentList() {
       origin: 'Kochi, India',
       destination: 'Rotterdam, Netherlands',
       cargo: 'Marine Products',
-      estimatedDelivery: '2024-01-14'
+      estimatedDelivery: '2024-01-14',
     },
     {
       id: '9',
@@ -222,7 +222,7 @@ function SimpleShipmentList() {
       origin: 'Visakhapatnam, India',
       destination: 'Busan, South Korea',
       cargo: 'Steel Products',
-      estimatedDelivery: '2024-01-19'
+      estimatedDelivery: '2024-01-19',
     },
     {
       id: '10',
@@ -231,7 +231,7 @@ function SimpleShipmentList() {
       origin: 'Ahmedabad, India',
       destination: 'Los Angeles, USA',
       cargo: 'Chemicals',
-      estimatedDelivery: '2024-01-08'
+      estimatedDelivery: '2024-01-08',
     },
     // From China
     {
@@ -241,7 +241,7 @@ function SimpleShipmentList() {
       origin: 'Shanghai, China',
       destination: 'Mumbai, India',
       cargo: 'Electronics',
-      estimatedDelivery: '2024-01-17'
+      estimatedDelivery: '2024-01-17',
     },
     {
       id: '12',
@@ -250,7 +250,7 @@ function SimpleShipmentList() {
       origin: 'Shenzhen, China',
       destination: 'Frankfurt, Germany',
       cargo: 'Consumer Electronics',
-      estimatedDelivery: '2024-01-11'
+      estimatedDelivery: '2024-01-11',
     },
     {
       id: '13',
@@ -259,7 +259,7 @@ function SimpleShipmentList() {
       origin: 'Guangzhou, China',
       destination: 'Chennai, India',
       cargo: 'Machinery',
-      estimatedDelivery: '2024-01-21'
+      estimatedDelivery: '2024-01-21',
     },
     {
       id: '14',
@@ -268,7 +268,7 @@ function SimpleShipmentList() {
       origin: 'Beijing, China',
       destination: 'London, UK',
       cargo: 'Industrial Equipment',
-      estimatedDelivery: '2024-01-25'
+      estimatedDelivery: '2024-01-25',
     },
     {
       id: '15',
@@ -277,7 +277,7 @@ function SimpleShipmentList() {
       origin: 'Tianjin, China',
       destination: 'Kolkata, India',
       cargo: 'Raw Materials',
-      estimatedDelivery: '2024-01-18'
+      estimatedDelivery: '2024-01-18',
     },
     // From USA
     {
@@ -287,7 +287,7 @@ function SimpleShipmentList() {
       origin: 'New York, USA',
       destination: 'Chennai, India',
       cargo: 'Medical Equipment',
-      estimatedDelivery: '2024-01-23'
+      estimatedDelivery: '2024-01-23',
     },
     {
       id: '17',
@@ -296,7 +296,7 @@ function SimpleShipmentList() {
       origin: 'Los Angeles, USA',
       destination: 'Tokyo, Japan',
       cargo: 'Agricultural Products',
-      estimatedDelivery: '2024-01-13'
+      estimatedDelivery: '2024-01-13',
     },
     {
       id: '18',
@@ -305,7 +305,7 @@ function SimpleShipmentList() {
       origin: 'Miami, USA',
       destination: 'São Paulo, Brazil',
       cargo: 'Technology Hardware',
-      estimatedDelivery: '2024-01-20'
+      estimatedDelivery: '2024-01-20',
     },
     {
       id: '19',
@@ -314,7 +314,7 @@ function SimpleShipmentList() {
       origin: 'Seattle, USA',
       destination: 'Mumbai, India',
       cargo: 'Aircraft Parts',
-      estimatedDelivery: '2024-01-26'
+      estimatedDelivery: '2024-01-26',
     },
     {
       id: '20',
@@ -323,7 +323,7 @@ function SimpleShipmentList() {
       origin: 'Houston, USA',
       destination: 'Dubai, UAE',
       cargo: 'Oil Equipment',
-      estimatedDelivery: '2024-01-17'
+      estimatedDelivery: '2024-01-17',
     },
     // From Europe
     {
@@ -333,7 +333,7 @@ function SimpleShipmentList() {
       origin: 'Hamburg, Germany',
       destination: 'Kolkata, India',
       cargo: 'Chemical Products',
-      estimatedDelivery: '2024-01-20'
+      estimatedDelivery: '2024-01-20',
     },
     {
       id: '22',
@@ -342,7 +342,7 @@ function SimpleShipmentList() {
       origin: 'Rotterdam, Netherlands',
       destination: 'Singapore',
       cargo: 'Food Products',
-      estimatedDelivery: '2024-01-09'
+      estimatedDelivery: '2024-01-09',
     },
     {
       id: '23',
@@ -351,7 +351,7 @@ function SimpleShipmentList() {
       origin: 'Antwerp, Belgium',
       destination: 'Mumbai, India',
       cargo: 'Luxury Goods',
-      estimatedDelivery: '2024-01-24'
+      estimatedDelivery: '2024-01-24',
     },
     {
       id: '24',
@@ -360,7 +360,7 @@ function SimpleShipmentList() {
       origin: 'Le Havre, France',
       destination: 'Chennai, India',
       cargo: 'Wine & Spirits',
-      estimatedDelivery: '2024-01-22'
+      estimatedDelivery: '2024-01-22',
     },
     {
       id: '25',
@@ -369,7 +369,7 @@ function SimpleShipmentList() {
       origin: 'Felixstowe, UK',
       destination: 'New York, USA',
       cargo: 'Manufactured Goods',
-      estimatedDelivery: '2024-01-07'
+      estimatedDelivery: '2024-01-07',
     },
     // From Middle East
     {
@@ -379,7 +379,7 @@ function SimpleShipmentList() {
       origin: 'Dubai, UAE',
       destination: 'Mumbai, India',
       cargo: 'Petroleum Products',
-      estimatedDelivery: '2024-01-16'
+      estimatedDelivery: '2024-01-16',
     },
     {
       id: '27',
@@ -388,7 +388,7 @@ function SimpleShipmentList() {
       origin: 'Jeddah, Saudi Arabia',
       destination: 'Karachi, Pakistan',
       cargo: 'Construction Materials',
-      estimatedDelivery: '2024-01-08'
+      estimatedDelivery: '2024-01-08',
     },
     {
       id: '28',
@@ -397,7 +397,7 @@ function SimpleShipmentList() {
       origin: 'Kuwait City, Kuwait',
       destination: 'Chennai, India',
       cargo: 'Oil & Gas Equipment',
-      estimatedDelivery: '2024-01-19'
+      estimatedDelivery: '2024-01-19',
     },
     // From Southeast Asia
     {
@@ -407,7 +407,7 @@ function SimpleShipmentList() {
       origin: 'Singapore',
       destination: 'Kolkata, India',
       cargo: 'Palm Oil',
-      estimatedDelivery: '2024-01-17'
+      estimatedDelivery: '2024-01-17',
     },
     {
       id: '30',
@@ -416,7 +416,7 @@ function SimpleShipmentList() {
       origin: 'Bangkok, Thailand',
       destination: 'Sydney, Australia',
       cargo: 'Rubber Products',
-      estimatedDelivery: '2024-01-23'
+      estimatedDelivery: '2024-01-23',
     },
     // From Africa
     {
@@ -426,7 +426,7 @@ function SimpleShipmentList() {
       origin: 'Cape Town, South Africa',
       destination: 'Chennai, India',
       cargo: 'Minerals',
-      estimatedDelivery: '2024-01-07'
+      estimatedDelivery: '2024-01-07',
     },
     {
       id: '32',
@@ -435,7 +435,7 @@ function SimpleShipmentList() {
       origin: 'Lagos, Nigeria',
       destination: 'London, UK',
       cargo: 'Agricultural Products',
-      estimatedDelivery: '2024-01-20'
+      estimatedDelivery: '2024-01-20',
     },
     // From South America
     {
@@ -445,7 +445,7 @@ function SimpleShipmentList() {
       origin: 'São Paulo, Brazil',
       destination: 'Rotterdam, Netherlands',
       cargo: 'Coffee Beans',
-      estimatedDelivery: '2024-01-26'
+      estimatedDelivery: '2024-01-26',
     },
     {
       id: '34',
@@ -454,7 +454,7 @@ function SimpleShipmentList() {
       origin: 'Buenos Aires, Argentina',
       destination: 'Shanghai, China',
       cargo: 'Beef Products',
-      estimatedDelivery: '2024-01-21'
+      estimatedDelivery: '2024-01-21',
     },
     // From Australia
     {
@@ -464,7 +464,7 @@ function SimpleShipmentList() {
       origin: 'Sydney, Australia',
       destination: 'Mumbai, India',
       cargo: 'Iron Ore',
-      estimatedDelivery: '2024-01-06'
+      estimatedDelivery: '2024-01-06',
     },
     // Additional Indian routes
     {
@@ -474,7 +474,7 @@ function SimpleShipmentList() {
       origin: 'Kandla, India',
       destination: 'Hamburg, Germany',
       cargo: 'Chemicals',
-      estimatedDelivery: '2024-01-15'
+      estimatedDelivery: '2024-01-15',
     },
     {
       id: '37',
@@ -483,7 +483,7 @@ function SimpleShipmentList() {
       origin: 'Tuticorin, India',
       destination: 'Colombo, Sri Lanka',
       cargo: 'Rice',
-      estimatedDelivery: '2024-01-16'
+      estimatedDelivery: '2024-01-16',
     },
     {
       id: '38',
@@ -492,7 +492,7 @@ function SimpleShipmentList() {
       origin: 'Ho Chi Minh City, Vietnam',
       destination: 'Los Angeles, USA',
       cargo: 'Garments',
-      estimatedDelivery: '2024-01-21'
+      estimatedDelivery: '2024-01-21',
     },
     {
       id: '39',
@@ -501,7 +501,7 @@ function SimpleShipmentList() {
       origin: 'Jakarta, Indonesia',
       destination: 'Mumbai, India',
       cargo: 'Coffee & Spices',
-      estimatedDelivery: '2024-01-18'
+      estimatedDelivery: '2024-01-18',
     },
     {
       id: '40',
@@ -510,7 +510,7 @@ function SimpleShipmentList() {
       origin: 'Manila, Philippines',
       destination: 'Tokyo, Japan',
       cargo: 'Electronics Components',
-      estimatedDelivery: '2024-01-06'
+      estimatedDelivery: '2024-01-06',
     },
     {
       id: '41',
@@ -519,7 +519,7 @@ function SimpleShipmentList() {
       origin: 'Alexandria, Egypt',
       destination: 'Mumbai, India',
       cargo: 'Cotton',
-      estimatedDelivery: '2024-01-25'
+      estimatedDelivery: '2024-01-25',
     },
     {
       id: '42',
@@ -528,7 +528,7 @@ function SimpleShipmentList() {
       origin: 'Casablanca, Morocco',
       destination: 'Hamburg, Germany',
       cargo: 'Phosphates',
-      estimatedDelivery: '2024-01-22'
+      estimatedDelivery: '2024-01-22',
     },
     {
       id: '43',
@@ -537,7 +537,7 @@ function SimpleShipmentList() {
       origin: 'Valparaíso, Chile',
       destination: 'Tokyo, Japan',
       cargo: 'Copper',
-      estimatedDelivery: '2024-01-05'
+      estimatedDelivery: '2024-01-05',
     },
     {
       id: '44',
@@ -546,7 +546,7 @@ function SimpleShipmentList() {
       origin: 'Melbourne, Australia',
       destination: 'Bangalore, India',
       cargo: 'Educational Materials',
-      estimatedDelivery: '2024-01-20'
+      estimatedDelivery: '2024-01-20',
     },
     {
       id: '45',
@@ -555,9 +555,9 @@ function SimpleShipmentList() {
       origin: 'Perth, Australia',
       destination: 'Shanghai, China',
       cargo: 'Wheat',
-      estimatedDelivery: '2024-01-24'
-    }
-  ])
+      estimatedDelivery: '2024-01-24',
+    },
+  ]);
 
   return (
     <div className="shipments">
@@ -570,19 +570,29 @@ function SimpleShipmentList() {
       </div>
 
       <div className="shipments-grid">
-        {shipments.map(shipment => (
+        {shipments.map((shipment) => (
           <div key={shipment.id} className="shipment-card">
             <div className="shipment-header">
               <h3>{shipment.trackingNumber}</h3>
-              <span className={`status-badge status-${shipment.status.toLowerCase().replace(' ', '-')}`}>
+              <span
+                className={`status-badge status-${shipment.status.toLowerCase().replace(' ', '-')}`}
+              >
                 {shipment.status}
               </span>
             </div>
             <div className="shipment-details">
-              <p><strong>From:</strong> {shipment.origin}</p>
-              <p><strong>To:</strong> {shipment.destination}</p>
-              <p><strong>Cargo:</strong> {shipment.cargo}</p>
-              <p><strong>ETA:</strong> {shipment.estimatedDelivery}</p>
+              <p>
+                <strong>From:</strong> {shipment.origin}
+              </p>
+              <p>
+                <strong>To:</strong> {shipment.destination}
+              </p>
+              <p>
+                <strong>Cargo:</strong> {shipment.cargo}
+              </p>
+              <p>
+                <strong>ETA:</strong> {shipment.estimatedDelivery}
+              </p>
             </div>
             <div className="shipment-actions">
               <Link to={`/shipments/${shipment.id}`} className="btn btn-secondary">
@@ -593,7 +603,7 @@ function SimpleShipmentList() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 // Simple Shipment Form Component
@@ -604,21 +614,21 @@ function SimpleShipmentForm() {
     destination: '',
     cargo: '',
     weight: '',
-    estimatedDelivery: ''
-  })
+    estimatedDelivery: '',
+  });
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('Creating shipment:', formData)
-    alert('Shipment created successfully!')
-  }
+    e.preventDefault();
+    console.log('Creating shipment:', formData);
+    alert('Shipment created successfully!');
+  };
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   return (
     <div className="shipment-form">
@@ -718,7 +728,7 @@ function SimpleShipmentForm() {
         </form>
       </div>
     </div>
-  )
+  );
 }
 
 // Simple Shipment Details Component
@@ -732,8 +742,8 @@ function SimpleShipmentDetails() {
     cargo: 'Electronics',
     weight: '500 kg',
     estimatedDelivery: '2024-01-15',
-    currentLocation: 'Atlantic Ocean'
-  }
+    currentLocation: 'Atlantic Ocean',
+  };
 
   return (
     <div className="shipment-details">
@@ -776,7 +786,7 @@ function SimpleShipmentDetails() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // Main App Component
@@ -804,7 +814,7 @@ function App() {
         <ToastContainer />
       </div>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

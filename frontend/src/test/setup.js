@@ -1,11 +1,11 @@
 // Test setup file for Vitest
-import '@testing-library/jest-dom'
-import { vi } from 'vitest'
+import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -15,24 +15,24 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
-})
+});
 
 // Mock IntersectionObserver
 global.IntersectionObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
-}))
+}));
 
 // Mock ResizeObserver
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
-}))
+}));
 
 // Mock fetch
-global.fetch = vi.fn()
+global.fetch = vi.fn();
 
 // Mock localStorage
 const localStorageMock = {
@@ -40,8 +40,8 @@ const localStorageMock = {
   setItem: vi.fn(),
   removeItem: vi.fn(),
   clear: vi.fn(),
-}
-global.localStorage = localStorageMock
+};
+global.localStorage = localStorageMock;
 
 // Mock sessionStorage
 const sessionStorageMock = {
@@ -49,8 +49,8 @@ const sessionStorageMock = {
   setItem: vi.fn(),
   removeItem: vi.fn(),
   clear: vi.fn(),
-}
-global.sessionStorage = sessionStorageMock
+};
+global.sessionStorage = sessionStorageMock;
 
 // Mock navigator
 Object.defineProperty(navigator, 'serviceWorker', {
@@ -59,39 +59,39 @@ Object.defineProperty(navigator, 'serviceWorker', {
     ready: Promise.resolve({}),
   },
   writable: true,
-})
+});
 
 Object.defineProperty(navigator, 'onLine', {
   writable: true,
   value: true,
-})
+});
 
 // Mock Notification
 global.Notification = vi.fn().mockImplementation(() => ({
   close: vi.fn(),
-}))
+}));
 
 Object.defineProperty(Notification, 'permission', {
   value: 'granted',
   writable: true,
-})
+});
 
 Object.defineProperty(Notification, 'requestPermission', {
   value: vi.fn().mockResolvedValue('granted'),
   writable: true,
-})
+});
 
 // Mock geolocation
 const mockGeolocation = {
   getCurrentPosition: vi.fn(),
   watchPosition: vi.fn(),
   clearWatch: vi.fn(),
-}
+};
 
 Object.defineProperty(navigator, 'geolocation', {
   value: mockGeolocation,
   writable: true,
-})
+});
 
 // Mock console methods for cleaner test output
 global.console = {
@@ -100,7 +100,7 @@ global.console = {
   // log: vi.fn(),
   // warn: vi.fn(),
   // error: vi.fn(),
-}
+};
 
 // Mock Chart.js
 vi.mock('chart.js', () => ({
@@ -116,7 +116,7 @@ vi.mock('chart.js', () => ({
   Legend: vi.fn(),
   Filler: vi.fn(),
   register: vi.fn(),
-}))
+}));
 
 // Mock react-chartjs-2
 vi.mock('react-chartjs-2', () => ({
@@ -124,7 +124,7 @@ vi.mock('react-chartjs-2', () => ({
   Bar: vi.fn(() => <div data-testid="bar-chart" />),
   Doughnut: vi.fn(() => <div data-testid="doughnut-chart" />),
   Radar: vi.fn(() => <div data-testid="radar-chart" />),
-}))
+}));
 
 // Mock Leaflet
 vi.mock('leaflet', () => ({
@@ -157,7 +157,7 @@ vi.mock('leaflet', () => ({
   polyline: vi.fn(() => ({
     addTo: vi.fn(),
   })),
-}))
+}));
 
 // Mock react-leaflet
 vi.mock('react-leaflet', () => ({
@@ -173,7 +173,7 @@ vi.mock('react-leaflet', () => ({
     addLayer: vi.fn(),
     removeLayer: vi.fn(),
   })),
-}))
+}));
 
 // Mock react-dropzone
 vi.mock('react-dropzone', () => ({
@@ -184,7 +184,7 @@ vi.mock('react-dropzone', () => ({
     acceptedFiles: [],
     rejectedFiles: [],
   })),
-}))
+}));
 
 // Mock react-hot-toast
 vi.mock('react-hot-toast', () => ({
@@ -201,7 +201,7 @@ vi.mock('react-hot-toast', () => ({
     dismiss: vi.fn(),
   },
   Toaster: vi.fn(() => <div data-testid="toaster" />),
-}))
+}));
 
 // Mock Socket.IO client
 vi.mock('socket.io-client', () => ({
@@ -213,11 +213,11 @@ vi.mock('socket.io-client', () => ({
     disconnect: vi.fn(),
     connected: true,
   })),
-}))
+}));
 
 // Clean up after each test
 afterEach(() => {
-  vi.clearAllMocks()
-  localStorage.clear()
-  sessionStorage.clear()
-})
+  vi.clearAllMocks();
+  localStorage.clear();
+  sessionStorage.clear();
+});

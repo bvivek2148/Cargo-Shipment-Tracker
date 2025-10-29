@@ -87,14 +87,6 @@ const requestLogger = (req, res, next) => {
   
   res.on('finish', () => {
     const duration = Date.now() - start;
-    const logData = {
-      method: req.method,
-      url: req.url,
-      status: res.statusCode,
-      duration: `${duration}ms`,
-      ip: req.ip,
-      userAgent: req.get('User-Agent')
-    };
     
     if (res.statusCode >= 400) {
       logger.error(`${req.method} ${req.url} - ${res.statusCode} - ${duration}ms - ${req.ip}`);

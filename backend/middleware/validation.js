@@ -235,7 +235,7 @@ const authValidation = {
 
     body('phone')
       .optional()
-      .matches(/^[\+]?[1-9][\d]{0,15}$/)
+      .matches(/^[+]?[1-9][\d]{0,15}$/)
       .withMessage('Please provide a valid phone number'),
 
     handleValidationErrors
@@ -278,7 +278,7 @@ const authValidation = {
 
     body('phone')
       .optional()
-      .matches(/^[\+]?[1-9][\d]{0,15}$/)
+      .matches(/^[+]?[1-9][\d]{0,15}$/)
       .withMessage('Please provide a valid phone number'),
 
     handleValidationErrors
@@ -338,7 +338,7 @@ const userValidation = {
 
     body('phone')
       .optional()
-      .matches(/^[\+]?[1-9][\d]{0,15}$/)
+      .matches(/^[+]?[1-9][\d]{0,15}$/)
       .withMessage('Please provide a valid phone number'),
 
     handleValidationErrors
@@ -383,7 +383,7 @@ const userValidation = {
 
     body('phone')
       .optional()
-      .matches(/^[\+]?[1-9][\d]{0,15}$/)
+      .matches(/^[+]?[1-9][\d]{0,15}$/)
       .withMessage('Please provide a valid phone number'),
 
     body('isActive')

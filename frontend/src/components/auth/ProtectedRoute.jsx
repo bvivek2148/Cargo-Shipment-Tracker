@@ -1,10 +1,10 @@
-import { Navigate, useLocation } from 'react-router-dom'
-import { useAuth } from '../../contexts/AuthContext'
-import { AlertCircle, Shield } from 'lucide-react'
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { AlertCircle, Shield } from 'lucide-react';
 
 function ProtectedRoute({ children, requiredRole, requiredPermission }) {
-  const { isAuthenticated, isLoading, user, hasPermission, hasRole } = useAuth()
-  const location = useLocation()
+  const { isAuthenticated, isLoading, user, hasPermission, hasRole } = useAuth();
+  const location = useLocation();
 
   // Show loading spinner while checking authentication
   if (isLoading) {
@@ -16,12 +16,12 @@ function ProtectedRoute({ children, requiredRole, requiredPermission }) {
           <p>Please wait while we check your permissions</p>
         </div>
       </div>
-    )
+    );
   }
 
   // Redirect to login if not authenticated
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   // Check role-based access
@@ -37,15 +37,12 @@ function ProtectedRoute({ children, requiredRole, requiredPermission }) {
           <p>
             Your current role: <strong>{user?.role}</strong>
           </p>
-          <button 
-            onClick={() => window.history.back()}
-            className="btn btn-secondary"
-          >
+          <button onClick={() => window.history.back()} className="btn btn-secondary">
             Go Back
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   // Check permission-based access
@@ -56,24 +53,22 @@ function ProtectedRoute({ children, requiredRole, requiredPermission }) {
           <AlertCircle size={64} className="access-denied-icon" />
           <h2>Insufficient Permissions</h2>
           <p>
-            You need <strong>{requiredPermission}</strong> level permissions or higher to access this page.
+            You need <strong>{requiredPermission}</strong> level permissions or higher to access
+            this page.
           </p>
           <p>
             Your current role: <strong>{user?.role}</strong>
           </p>
-          <button 
-            onClick={() => window.history.back()}
-            className="btn btn-secondary"
-          >
+          <button onClick={() => window.history.back()} className="btn btn-secondary">
             Go Back
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   // Render children if all checks pass
-  return children
+  return children;
 }
 
-export default ProtectedRoute
+export default ProtectedRoute;

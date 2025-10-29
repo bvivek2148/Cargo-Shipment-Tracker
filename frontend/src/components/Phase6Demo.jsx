@@ -1,19 +1,22 @@
-import { useState } from 'react'
-import { BarChart3, Brain, FileText, TrendingUp, Settings, Target } from 'lucide-react'
-import EnhancedDashboard from './analytics/EnhancedDashboard'
-import AdvancedCharts from './charts/AdvancedCharts'
-import PredictiveEngine from './analytics/PredictiveEngine'
-import AutomatedReporting from './reports/AutomatedReporting'
-import BusinessIntelligence from './analytics/BusinessIntelligence'
+import { useState } from 'react';
+import { BarChart3, Brain, FileText, TrendingUp, Settings, Target } from 'lucide-react';
+import EnhancedDashboard from './analytics/EnhancedDashboard';
+import AdvancedCharts from './charts/AdvancedCharts';
+import PredictiveEngine from './analytics/PredictiveEngine';
+import AutomatedReporting from './reports/AutomatedReporting';
+import BusinessIntelligence from './analytics/BusinessIntelligence';
 
 function Phase6Demo() {
-  const [activeTab, setActiveTab] = useState('dashboard')
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   return (
     <div className="phase6-demo">
       <div className="demo-header">
         <h2>📊 Phase 6: Advanced Analytics & Reporting</h2>
-        <p>Business intelligence, predictive analytics, and automated reporting for strategic decision making</p>
+        <p>
+          Business intelligence, predictive analytics, and automated reporting for strategic
+          decision making
+        </p>
       </div>
 
       {/* Feature Overview */}
@@ -72,35 +75,35 @@ function Phase6Demo() {
 
       {/* Demo Tabs */}
       <div className="demo-tabs">
-        <button 
+        <button
           className={`tab-button ${activeTab === 'dashboard' ? 'active' : ''}`}
           onClick={() => setActiveTab('dashboard')}
         >
           <BarChart3 size={16} />
           Enhanced Dashboard
         </button>
-        <button 
+        <button
           className={`tab-button ${activeTab === 'charts' ? 'active' : ''}`}
           onClick={() => setActiveTab('charts')}
         >
           <TrendingUp size={16} />
           Advanced Charts
         </button>
-        <button 
+        <button
           className={`tab-button ${activeTab === 'predictions' ? 'active' : ''}`}
           onClick={() => setActiveTab('predictions')}
         >
           <Brain size={16} />
           Predictive Engine
         </button>
-        <button 
+        <button
           className={`tab-button ${activeTab === 'reports' ? 'active' : ''}`}
           onClick={() => setActiveTab('reports')}
         >
           <FileText size={16} />
           Automated Reports
         </button>
-        <button 
+        <button
           className={`tab-button ${activeTab === 'business' ? 'active' : ''}`}
           onClick={() => setActiveTab('business')}
         >
@@ -166,7 +169,7 @@ function Phase6Demo() {
       <div className="phase6-summary">
         <h3>🎉 Phase 6 Complete!</h3>
         <p>The Cargo Shipment Tracker now includes advanced analytics and business intelligence:</p>
-        
+
         <div className="summary-grid">
           <div className="summary-item">
             <h4>📊 Enhanced Analytics</h4>
@@ -178,7 +181,7 @@ function Phase6Demo() {
               <li>Risk assessment and mitigation</li>
             </ul>
           </div>
-          
+
           <div className="summary-item">
             <h4>🧠 Predictive Analytics</h4>
             <ul>
@@ -189,7 +192,7 @@ function Phase6Demo() {
               <li>Model accuracy monitoring</li>
             </ul>
           </div>
-          
+
           <div className="summary-item">
             <h4>📋 Automated Reporting</h4>
             <ul>
@@ -200,7 +203,7 @@ function Phase6Demo() {
               <li>Report template library</li>
             </ul>
           </div>
-          
+
           <div className="summary-item">
             <h4>🏢 Business Intelligence</h4>
             <ul>
@@ -214,7 +217,7 @@ function Phase6Demo() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Phase6Demo
+export default Phase6Demo;

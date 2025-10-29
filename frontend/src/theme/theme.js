@@ -14,9 +14,9 @@ export const theme = {
       700: '#1d4ed8',
       800: '#1e40af',
       900: '#1e3a8a',
-      950: '#172554'
+      950: '#172554',
     },
-    
+
     // Secondary Colors
     secondary: {
       50: '#f8fafc',
@@ -29,9 +29,9 @@ export const theme = {
       700: '#334155',
       800: '#1e293b',
       900: '#0f172a',
-      950: '#020617'
+      950: '#020617',
     },
-    
+
     // Success Colors
     success: {
       50: '#f0fdf4',
@@ -44,9 +44,9 @@ export const theme = {
       700: '#15803d',
       800: '#166534',
       900: '#14532d',
-      950: '#052e16'
+      950: '#052e16',
     },
-    
+
     // Warning Colors
     warning: {
       50: '#fffbeb',
@@ -59,9 +59,9 @@ export const theme = {
       700: '#b45309',
       800: '#92400e',
       900: '#78350f',
-      950: '#451a03'
+      950: '#451a03',
     },
-    
+
     // Error Colors
     error: {
       50: '#fef2f2',
@@ -74,9 +74,9 @@ export const theme = {
       700: '#b91c1c',
       800: '#991b1b',
       900: '#7f1d1d',
-      950: '#450a0a'
+      950: '#450a0a',
     },
-    
+
     // Info Colors
     info: {
       50: '#f0f9ff',
@@ -89,15 +89,23 @@ export const theme = {
       700: '#0369a1',
       800: '#075985',
       900: '#0c4a6e',
-      950: '#082f49'
-    }
+      950: '#082f49',
+    },
   },
-  
+
   // Typography
   typography: {
     fontFamily: {
-      sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-      mono: ['JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', 'monospace']
+      sans: [
+        'Inter',
+        'system-ui',
+        '-apple-system',
+        'BlinkMacSystemFont',
+        'Segoe UI',
+        'Roboto',
+        'sans-serif',
+      ],
+      mono: ['JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', 'monospace'],
     },
     fontSize: {
       xs: '0.75rem',
@@ -109,7 +117,7 @@ export const theme = {
       '3xl': '1.875rem',
       '4xl': '2.25rem',
       '5xl': '3rem',
-      '6xl': '3.75rem'
+      '6xl': '3.75rem',
     },
     fontWeight: {
       thin: '100',
@@ -119,7 +127,7 @@ export const theme = {
       semibold: '600',
       bold: '700',
       extrabold: '800',
-      black: '900'
+      black: '900',
     },
     lineHeight: {
       none: '1',
@@ -127,10 +135,10 @@ export const theme = {
       snug: '1.375',
       normal: '1.5',
       relaxed: '1.625',
-      loose: '2'
-    }
+      loose: '2',
+    },
   },
-  
+
   // Spacing
   spacing: {
     0: '0',
@@ -150,9 +158,9 @@ export const theme = {
     40: '10rem',
     48: '12rem',
     56: '14rem',
-    64: '16rem'
+    64: '16rem',
   },
-  
+
   // Border Radius
   borderRadius: {
     none: '0',
@@ -163,9 +171,9 @@ export const theme = {
     xl: '0.75rem',
     '2xl': '1rem',
     '3xl': '1.5rem',
-    full: '9999px'
+    full: '9999px',
   },
-  
+
   // Shadows
   boxShadow: {
     sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
@@ -175,20 +183,21 @@ export const theme = {
     xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
     '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
     inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
-    none: 'none'
+    none: 'none',
   },
-  
+
   // Transitions
   transition: {
     none: 'none',
     all: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
     default: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-    colors: 'color 150ms cubic-bezier(0.4, 0, 0.2, 1), background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), border-color 150ms cubic-bezier(0.4, 0, 0.2, 1)',
+    colors:
+      'color 150ms cubic-bezier(0.4, 0, 0.2, 1), background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), border-color 150ms cubic-bezier(0.4, 0, 0.2, 1)',
     opacity: 'opacity 150ms cubic-bezier(0.4, 0, 0.2, 1)',
     shadow: 'box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-    transform: 'transform 150ms cubic-bezier(0.4, 0, 0.2, 1)'
+    transform: 'transform 150ms cubic-bezier(0.4, 0, 0.2, 1)',
   },
-  
+
   // Animation Durations
   duration: {
     75: '75ms',
@@ -198,9 +207,9 @@ export const theme = {
     300: '300ms',
     500: '500ms',
     700: '700ms',
-    1000: '1000ms'
+    1000: '1000ms',
   },
-  
+
   // Z-Index Scale
   zIndex: {
     0: '0',
@@ -216,18 +225,18 @@ export const theme = {
     modal: '1040',
     popover: '1050',
     tooltip: '1060',
-    toast: '1070'
+    toast: '1070',
   },
-  
+
   // Breakpoints
   breakpoints: {
     sm: '640px',
     md: '768px',
     lg: '1024px',
     xl: '1280px',
-    '2xl': '1536px'
-  }
-}
+    '2xl': '1536px',
+  },
+};
 
 // Light Theme
 export const lightTheme = {
@@ -240,30 +249,30 @@ export const lightTheme = {
       secondary: '#f8fafc',
       tertiary: '#f1f5f9',
       elevated: '#ffffff',
-      overlay: 'rgba(0, 0, 0, 0.5)'
+      overlay: 'rgba(0, 0, 0, 0.5)',
     },
     text: {
       primary: '#1e293b',
       secondary: '#475569',
       tertiary: '#64748b',
       disabled: '#94a3b8',
-      inverse: '#ffffff'
+      inverse: '#ffffff',
     },
     border: {
       primary: '#e2e8f0',
       secondary: '#cbd5e1',
       focus: '#3b82f6',
-      error: '#ef4444'
+      error: '#ef4444',
     },
     surface: {
       primary: '#ffffff',
       secondary: '#f8fafc',
       tertiary: '#f1f5f9',
       hover: '#f1f5f9',
-      active: '#e2e8f0'
-    }
-  }
-}
+      active: '#e2e8f0',
+    },
+  },
+};
 
 // Dark Theme
 export const darkTheme = {
@@ -276,30 +285,30 @@ export const darkTheme = {
       secondary: '#1e293b',
       tertiary: '#334155',
       elevated: '#1e293b',
-      overlay: 'rgba(0, 0, 0, 0.8)'
+      overlay: 'rgba(0, 0, 0, 0.8)',
     },
     text: {
       primary: '#f1f5f9',
       secondary: '#cbd5e1',
       tertiary: '#94a3b8',
       disabled: '#64748b',
-      inverse: '#1e293b'
+      inverse: '#1e293b',
     },
     border: {
       primary: '#334155',
       secondary: '#475569',
       focus: '#60a5fa',
-      error: '#f87171'
+      error: '#f87171',
     },
     surface: {
       primary: '#1e293b',
       secondary: '#334155',
       tertiary: '#475569',
       hover: '#334155',
-      active: '#475569'
-    }
-  }
-}
+      active: '#475569',
+    },
+  },
+};
 
 // Component Variants
 export const componentVariants = {
@@ -308,51 +317,51 @@ export const componentVariants = {
       background: 'primary.500',
       color: 'white',
       hover: 'primary.600',
-      active: 'primary.700'
+      active: 'primary.700',
     },
     secondary: {
       background: 'secondary.100',
       color: 'secondary.700',
       hover: 'secondary.200',
-      active: 'secondary.300'
+      active: 'secondary.300',
     },
     success: {
       background: 'success.500',
       color: 'white',
       hover: 'success.600',
-      active: 'success.700'
+      active: 'success.700',
     },
     warning: {
       background: 'warning.500',
       color: 'white',
       hover: 'warning.600',
-      active: 'warning.700'
+      active: 'warning.700',
     },
     error: {
       background: 'error.500',
       color: 'white',
       hover: 'error.600',
-      active: 'error.700'
-    }
+      active: 'error.700',
+    },
   },
   card: {
     default: {
       background: 'surface.primary',
       border: 'border.primary',
-      shadow: 'base'
+      shadow: 'base',
     },
     elevated: {
       background: 'surface.primary',
       border: 'border.primary',
-      shadow: 'lg'
+      shadow: 'lg',
     },
     interactive: {
       background: 'surface.primary',
       border: 'border.primary',
       shadow: 'base',
-      hover: 'surface.hover'
-    }
-  }
-}
+      hover: 'surface.hover',
+    },
+  },
+};
 
-export default theme
+export default theme;

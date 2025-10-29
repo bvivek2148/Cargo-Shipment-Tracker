@@ -1,17 +1,17 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useAuth } from '../../contexts/AuthContext'
-import { User, Edit, Save, X, Lock, Eye, EyeOff, CheckCircle, AlertCircle } from 'lucide-react'
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { User, Edit, Save, X, Lock, Eye, EyeOff, CheckCircle, AlertCircle } from 'lucide-react';
 
 function UserProfile() {
-  const { user, updateProfile, changePassword } = useAuth()
-  const [isEditing, setIsEditing] = useState(false)
-  const [isChangingPassword, setIsChangingPassword] = useState(false)
+  const { user, updateProfile, changePassword } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
-    confirm: false
-  })
+    confirm: false,
+  });
 
   const [profileData, setProfileData] = useState({
     firstName: user?.firstName || '',
@@ -25,156 +25,156 @@ function UserProfile() {
         email: user?.preferences?.notifications?.email ?? true,
         push: user?.preferences?.notifications?.push ?? true,
         shipmentUpdates: user?.preferences?.notifications?.shipmentUpdates ?? true,
-        systemAlerts: user?.preferences?.notifications?.systemAlerts ?? true
+        systemAlerts: user?.preferences?.notifications?.systemAlerts ?? true,
       },
       dashboard: {
         defaultView: user?.preferences?.dashboard?.defaultView || 'overview',
-        itemsPerPage: user?.preferences?.dashboard?.itemsPerPage || 10
-      }
-    }
-  })
+        itemsPerPage: user?.preferences?.dashboard?.itemsPerPage || 10,
+      },
+    },
+  });
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
-    confirmPassword: ''
-  })
+    confirmPassword: '',
+  });
 
-  const [errors, setErrors] = useState({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [successMessage, setSuccessMessage] = useState('')
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleProfileChange = (e) => {
-    const { name, value, type, checked } = e.target
-    
+    const { name, value, type, checked } = e.target;
+
     if (name.includes('.')) {
-      const keys = name.split('.')
-      setProfileData(prev => {
-        const newData = { ...prev }
-        let current = newData
-        
+      const keys = name.split('.');
+      setProfileData((prev) => {
+        const newData = { ...prev };
+        let current = newData;
+
         for (let i = 0; i < keys.length - 1; i++) {
-          current = current[keys[i]]
+          current = current[keys[i]];
         }
-        
-        current[keys[keys.length - 1]] = type === 'checkbox' ? checked : value
-        return newData
-      })
+
+        current[keys[keys.length - 1]] = type === 'checkbox' ? checked : value;
+        return newData;
+      });
     } else {
-      setProfileData(prev => ({
+      setProfileData((prev) => ({
         ...prev,
-        [name]: type === 'checkbox' ? checked : value
-      }))
+        [name]: type === 'checkbox' ? checked : value,
+      }));
     }
-  }
+  };
 
   const handlePasswordChange = (e) => {
-    const { name, value } = e.target
-    setPasswordData(prev => ({
+    const { name, value } = e.target;
+    setPasswordData((prev) => ({
       ...prev,
-      [name]: value
-    }))
-  }
+      [name]: value,
+    }));
+  };
 
   const validateProfile = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!profileData.firstName.trim()) {
-      newErrors.firstName = 'First name is required'
+      newErrors.firstName = 'First name is required';
     }
 
     if (!profileData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required'
+      newErrors.lastName = 'Last name is required';
     }
 
     if (profileData.phone && !/^[\+]?[1-9][\d]{0,15}$/.test(profileData.phone)) {
-      newErrors.phone = 'Please enter a valid phone number'
+      newErrors.phone = 'Please enter a valid phone number';
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const validatePassword = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!passwordData.currentPassword) {
-      newErrors.currentPassword = 'Current password is required'
+      newErrors.currentPassword = 'Current password is required';
     }
 
     if (!passwordData.newPassword) {
-      newErrors.newPassword = 'New password is required'
+      newErrors.newPassword = 'New password is required';
     } else if (passwordData.newPassword.length < 8) {
-      newErrors.newPassword = 'Password must be at least 8 characters'
+      newErrors.newPassword = 'Password must be at least 8 characters';
     }
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match'
+      newErrors.confirmPassword = 'Passwords do not match';
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleProfileSubmit = async (e) => {
-    e.preventDefault()
-    
-    if (!validateProfile()) return
+    e.preventDefault();
 
-    setIsSubmitting(true)
-    setErrors({})
-    setSuccessMessage('')
+    if (!validateProfile()) return;
+
+    setIsSubmitting(true);
+    setErrors({});
+    setSuccessMessage('');
 
     try {
-      const result = await updateProfile(profileData)
-      
+      const result = await updateProfile(profileData);
+
       if (result.success) {
-        setIsEditing(false)
-        setSuccessMessage('Profile updated successfully!')
-        setTimeout(() => setSuccessMessage(''), 3000)
+        setIsEditing(false);
+        setSuccessMessage('Profile updated successfully!');
+        setTimeout(() => setSuccessMessage(''), 3000);
       } else {
-        setErrors({ submit: result.error })
+        setErrors({ submit: result.error });
       }
     } catch (error) {
-      setErrors({ submit: 'Failed to update profile' })
+      setErrors({ submit: 'Failed to update profile' });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handlePasswordSubmit = async (e) => {
-    e.preventDefault()
-    
-    if (!validatePassword()) return
+    e.preventDefault();
 
-    setIsSubmitting(true)
-    setErrors({})
-    setSuccessMessage('')
+    if (!validatePassword()) return;
+
+    setIsSubmitting(true);
+    setErrors({});
+    setSuccessMessage('');
 
     try {
-      const result = await changePassword(passwordData.currentPassword, passwordData.newPassword)
-      
+      const result = await changePassword(passwordData.currentPassword, passwordData.newPassword);
+
       if (result.success) {
-        setIsChangingPassword(false)
-        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
-        setSuccessMessage('Password changed successfully!')
-        setTimeout(() => setSuccessMessage(''), 3000)
+        setIsChangingPassword(false);
+        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        setSuccessMessage('Password changed successfully!');
+        setTimeout(() => setSuccessMessage(''), 3000);
       } else {
-        setErrors({ password: result.error })
+        setErrors({ password: result.error });
       }
     } catch (error) {
-      setErrors({ password: 'Failed to change password' })
+      setErrors({ password: 'Failed to change password' });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const togglePasswordVisibility = (field) => {
-    setShowPasswords(prev => ({
+    setShowPasswords((prev) => ({
       ...prev,
-      [field]: !prev[field]
-    }))
-  }
+      [field]: !prev[field],
+    }));
+  };
 
   return (
     <div className="user-profile">
@@ -211,23 +211,17 @@ function UserProfile() {
           <div className="section-header">
             <h2>Profile Information</h2>
             {!isEditing ? (
-              <button 
-                onClick={() => setIsEditing(true)}
-                className="btn btn-secondary"
-              >
+              <button onClick={() => setIsEditing(true)} className="btn btn-secondary">
                 <Edit size={16} />
                 Edit Profile
               </button>
             ) : (
               <div className="edit-actions">
-                <button 
-                  onClick={() => setIsEditing(false)}
-                  className="btn btn-secondary"
-                >
+                <button onClick={() => setIsEditing(false)} className="btn btn-secondary">
                   <X size={16} />
                   Cancel
                 </button>
-                <button 
+                <button
                   onClick={handleProfileSubmit}
                   disabled={isSubmitting}
                   className="btn btn-primary"
@@ -251,9 +245,7 @@ function UserProfile() {
                   disabled={!isEditing}
                   className={errors.firstName ? 'error' : ''}
                 />
-                {errors.firstName && (
-                  <span className="error-message">{errors.firstName}</span>
-                )}
+                {errors.firstName && <span className="error-message">{errors.firstName}</span>}
               </div>
 
               <div className="form-group">
@@ -266,19 +258,12 @@ function UserProfile() {
                   disabled={!isEditing}
                   className={errors.lastName ? 'error' : ''}
                 />
-                {errors.lastName && (
-                  <span className="error-message">{errors.lastName}</span>
-                )}
+                {errors.lastName && <span className="error-message">{errors.lastName}</span>}
               </div>
 
               <div className="form-group">
                 <label>Email</label>
-                <input
-                  type="email"
-                  value={user?.email}
-                  disabled
-                  className="disabled"
-                />
+                <input type="email" value={user?.email} disabled className="disabled" />
                 <small>Email cannot be changed</small>
               </div>
 
@@ -316,9 +301,7 @@ function UserProfile() {
                   className={errors.phone ? 'error' : ''}
                   placeholder="e.g., +1234567890"
                 />
-                {errors.phone && (
-                  <span className="error-message">{errors.phone}</span>
-                )}
+                {errors.phone && <span className="error-message">{errors.phone}</span>}
               </div>
             </div>
           </form>
@@ -329,27 +312,24 @@ function UserProfile() {
           <div className="section-header">
             <h2>Security</h2>
             {!isChangingPassword ? (
-              <button 
-                onClick={() => setIsChangingPassword(true)}
-                className="btn btn-secondary"
-              >
+              <button onClick={() => setIsChangingPassword(true)} className="btn btn-secondary">
                 <Lock size={16} />
                 Change Password
               </button>
             ) : (
               <div className="edit-actions">
-                <button 
+                <button
                   onClick={() => {
-                    setIsChangingPassword(false)
-                    setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
-                    setErrors({})
+                    setIsChangingPassword(false);
+                    setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                    setErrors({});
                   }}
                   className="btn btn-secondary"
                 >
                   <X size={16} />
                   Cancel
                 </button>
-                <button 
+                <button
                   onClick={handlePasswordSubmit}
                   disabled={isSubmitting}
                   className="btn btn-primary"
@@ -411,9 +391,7 @@ function UserProfile() {
                     {showPasswords.new ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
-                {errors.newPassword && (
-                  <span className="error-message">{errors.newPassword}</span>
-                )}
+                {errors.newPassword && <span className="error-message">{errors.newPassword}</span>}
               </div>
 
               <div className="form-group">
@@ -545,7 +523,7 @@ function UserProfile() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default UserProfile
+export default UserProfile;

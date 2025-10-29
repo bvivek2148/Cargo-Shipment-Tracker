@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../../contexts/AuthContext'
-import { Eye, EyeOff, UserPlus, AlertCircle, Ship, CheckCircle } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { Eye, EyeOff, UserPlus, AlertCircle, Ship, CheckCircle } from 'lucide-react';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -11,124 +11,127 @@ function Register() {
     password: '',
     confirmPassword: '',
     department: '',
-    phone: ''
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [errors, setErrors] = useState({})
+    phone: '',
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const { register, isAuthenticated, error, clearError } = useAuth()
-  const navigate = useNavigate()
+  const { register, isAuthenticated, error, clearError } = useAuth();
+  const navigate = useNavigate();
 
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard', { replace: true })
+      navigate('/dashboard', { replace: true });
     }
-  }, [isAuthenticated, navigate])
+  }, [isAuthenticated, navigate]);
 
   // Clear errors when component mounts
   useEffect(() => {
-    clearError()
-  }, [clearError])
+    clearError();
+  }, [clearError]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
+    const { name, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
-    
+      [name]: value,
+    }));
+
     // Clear field error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
-      }))
+        [name]: '',
+      }));
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required'
+      newErrors.firstName = 'First name is required';
     } else if (formData.firstName.trim().length < 2) {
-      newErrors.firstName = 'First name must be at least 2 characters'
+      newErrors.firstName = 'First name must be at least 2 characters';
     }
 
     if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required'
+      newErrors.lastName = 'Last name is required';
     } else if (formData.lastName.trim().length < 2) {
-      newErrors.lastName = 'Last name must be at least 2 characters'
+      newErrors.lastName = 'Last name must be at least 2 characters';
     }
 
     if (!formData.email) {
-      newErrors.email = 'Email is required'
+      newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid'
+      newErrors.email = 'Email is invalid';
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required'
+      newErrors.password = 'Password is required';
     } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters'
-    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(formData.password)) {
-      newErrors.password = 'Password must contain uppercase, lowercase, number, and special character'
+      newErrors.password = 'Password must be at least 8 characters';
+    } else if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(formData.password)
+    ) {
+      newErrors.password =
+        'Password must contain uppercase, lowercase, number, and special character';
     }
 
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password'
+      newErrors.confirmPassword = 'Please confirm your password';
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match'
+      newErrors.confirmPassword = 'Passwords do not match';
     }
 
     if (formData.phone && !/^[\+]?[1-9][\d]{0,15}$/.test(formData.phone)) {
-      newErrors.phone = 'Please enter a valid phone number'
+      newErrors.phone = 'Please enter a valid phone number';
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!validateForm()) {
-      return
+      return;
     }
 
-    setIsSubmitting(true)
-    clearError()
+    setIsSubmitting(true);
+    clearError();
 
     try {
-      const { confirmPassword, ...userData } = formData
-      const result = await register(userData)
-      
+      const { confirmPassword, ...userData } = formData;
+      const result = await register(userData);
+
       if (result.success) {
-        navigate('/dashboard', { replace: true })
+        navigate('/dashboard', { replace: true });
       }
     } catch (error) {
-      console.error('Registration error:', error)
+      console.error('Registration error:', error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const getPasswordStrength = (password) => {
-    let strength = 0
-    if (password.length >= 8) strength++
-    if (/[a-z]/.test(password)) strength++
-    if (/[A-Z]/.test(password)) strength++
-    if (/\d/.test(password)) strength++
-    if (/[@$!%*?&]/.test(password)) strength++
-    return strength
-  }
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/\d/.test(password)) strength++;
+    if (/[@$!%*?&]/.test(password)) strength++;
+    return strength;
+  };
 
-  const passwordStrength = getPasswordStrength(formData.password)
-  const strengthLabels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong']
-  const strengthColors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#16a34a']
+  const passwordStrength = getPasswordStrength(formData.password);
+  const strengthLabels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+  const strengthColors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#16a34a'];
 
   return (
     <div className="auth-container">
@@ -163,9 +166,7 @@ function Register() {
                 placeholder="Enter first name"
                 autoComplete="given-name"
               />
-              {errors.firstName && (
-                <span className="error-message">{errors.firstName}</span>
-              )}
+              {errors.firstName && <span className="error-message">{errors.firstName}</span>}
             </div>
 
             <div className="form-group">
@@ -180,9 +181,7 @@ function Register() {
                 placeholder="Enter last name"
                 autoComplete="family-name"
               />
-              {errors.lastName && (
-                <span className="error-message">{errors.lastName}</span>
-              )}
+              {errors.lastName && <span className="error-message">{errors.lastName}</span>}
             </div>
           </div>
 
@@ -198,9 +197,7 @@ function Register() {
               placeholder="Enter your email"
               autoComplete="email"
             />
-            {errors.email && (
-              <span className="error-message">{errors.email}</span>
-            )}
+            {errors.email && <span className="error-message">{errors.email}</span>}
           </div>
 
           <div className="form-group">
@@ -227,11 +224,11 @@ function Register() {
             {formData.password && (
               <div className="password-strength">
                 <div className="strength-bar">
-                  <div 
+                  <div
                     className="strength-fill"
-                    style={{ 
+                    style={{
                       width: `${(passwordStrength / 5) * 100}%`,
-                      backgroundColor: strengthColors[passwordStrength - 1] || '#ef4444'
+                      backgroundColor: strengthColors[passwordStrength - 1] || '#ef4444',
                     }}
                   />
                 </div>
@@ -240,9 +237,7 @@ function Register() {
                 </span>
               </div>
             )}
-            {errors.password && (
-              <span className="error-message">{errors.password}</span>
-            )}
+            {errors.password && <span className="error-message">{errors.password}</span>}
           </div>
 
           <div className="form-group">
@@ -303,18 +298,12 @@ function Register() {
                 placeholder="e.g., +1234567890"
                 autoComplete="tel"
               />
-              {errors.phone && (
-                <span className="error-message">{errors.phone}</span>
-              )}
+              {errors.phone && <span className="error-message">{errors.phone}</span>}
             </div>
           </div>
 
           <div className="form-actions">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn btn-primary btn-full"
-            >
+            <button type="submit" disabled={isSubmitting} className="btn btn-primary btn-full">
               <UserPlus size={16} />
               {isSubmitting ? 'Creating Account...' : 'Create Account'}
             </button>
@@ -331,7 +320,7 @@ function Register() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Register
+export default Register;

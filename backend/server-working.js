@@ -4,8 +4,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
-// Import models
-const User = require('./models/User');
+// Models imported but used for schema definitions
 
 // Import controllers
 const authController = require('./controllers/authController');
@@ -83,7 +82,8 @@ app.get('/api/stats', authenticate, (req, res) => {
 });
 
 // Error handling middleware
-app.use((err, req, res, next) => {
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, _next) => {
   console.error('Error:', err);
   res.status(500).json({
     success: false,

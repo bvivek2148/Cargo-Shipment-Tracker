@@ -1,10 +1,10 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Save, X, AlertCircle } from 'lucide-react'
-import { shipmentAPI } from '../services/api'
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Save, X, AlertCircle } from 'lucide-react';
+import { shipmentAPI } from '../services/api';
 
 function ShipmentForm({ shipments, setShipments, backendStatus }) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     trackingNumber: '',
     origin: '',
@@ -13,102 +13,105 @@ function ShipmentForm({ shipments, setShipments, backendStatus }) {
     estimatedDelivery: '',
     cargo: '',
     weight: '',
-    description: ''
-  })
+    description: '',
+  });
 
-  const [errors, setErrors] = useState({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
+    const { name, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
-    
+      [name]: value,
+    }));
+
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
-      }))
+        [name]: '',
+      }));
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors = {}
-    
+    const newErrors = {};
+
     if (!formData.trackingNumber.trim()) {
-      newErrors.trackingNumber = 'Tracking number is required'
+      newErrors.trackingNumber = 'Tracking number is required';
     }
-    
+
     if (!formData.origin.trim()) {
-      newErrors.origin = 'Origin is required'
+      newErrors.origin = 'Origin is required';
     }
-    
+
     if (!formData.destination.trim()) {
-      newErrors.destination = 'Destination is required'
+      newErrors.destination = 'Destination is required';
     }
-    
+
     if (!formData.cargo.trim()) {
-      newErrors.cargo = 'Cargo description is required'
+      newErrors.cargo = 'Cargo description is required';
     }
-    
+
     if (!formData.weight.trim()) {
-      newErrors.weight = 'Weight is required'
+      newErrors.weight = 'Weight is required';
     }
-    
+
     if (!formData.estimatedDelivery) {
-      newErrors.estimatedDelivery = 'Estimated delivery date is required'
+      newErrors.estimatedDelivery = 'Estimated delivery date is required';
     }
-    
+
     // Check if tracking number already exists
-    if (formData.trackingNumber && shipments.some(s => s.trackingNumber === formData.trackingNumber)) {
-      newErrors.trackingNumber = 'Tracking number already exists'
+    if (
+      formData.trackingNumber &&
+      shipments.some((s) => s.trackingNumber === formData.trackingNumber)
+    ) {
+      newErrors.trackingNumber = 'Tracking number already exists';
     }
-    
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validateForm()) {
-      return
+      return;
     }
 
-    setIsSubmitting(true)
-    setErrors({})
+    setIsSubmitting(true);
+    setErrors({});
 
     try {
       if (backendStatus === 'connected') {
         // Use API to create shipment
-        const newShipment = await shipmentAPI.create(formData)
-        setShipments(prev => [...prev, newShipment])
+        const newShipment = await shipmentAPI.create(formData);
+        setShipments((prev) => [...prev, newShipment]);
       } else {
         // Fallback to local state for offline mode
         const newShipment = {
           _id: Date.now().toString(),
           ...formData,
           createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-        setShipments(prev => [...prev, newShipment])
+          updatedAt: new Date().toISOString(),
+        };
+        setShipments((prev) => [...prev, newShipment]);
       }
 
-      navigate('/shipments')
+      navigate('/shipments');
     } catch (error) {
-      console.error('Failed to create shipment:', error)
-      setErrors({ submit: error.message })
+      console.error('Failed to create shipment:', error);
+      setErrors({ submit: error.message });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleCancel = () => {
-    navigate('/shipments')
-  }
+    navigate('/shipments');
+  };
 
   return (
     <div className="shipment-form">
@@ -144,17 +147,14 @@ function ShipmentForm({ shipments, setShipments, backendStatus }) {
               className={errors.trackingNumber ? 'error' : ''}
               placeholder="e.g., CST001"
             />
-            {errors.trackingNumber && <span className="error-message">{errors.trackingNumber}</span>}
+            {errors.trackingNumber && (
+              <span className="error-message">{errors.trackingNumber}</span>
+            )}
           </div>
 
           <div className="form-group">
             <label htmlFor="status">Status</label>
-            <select
-              id="status"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-            >
+            <select id="status" name="status" value={formData.status} onChange={handleChange}>
               <option value="Pending">Pending</option>
               <option value="In Transit">In Transit</option>
               <option value="Delivered">Delivered</option>
@@ -228,7 +228,9 @@ function ShipmentForm({ shipments, setShipments, backendStatus }) {
               onChange={handleChange}
               className={errors.estimatedDelivery ? 'error' : ''}
             />
-            {errors.estimatedDelivery && <span className="error-message">{errors.estimatedDelivery}</span>}
+            {errors.estimatedDelivery && (
+              <span className="error-message">{errors.estimatedDelivery}</span>
+            )}
           </div>
 
           <div className="form-group full-width">
@@ -256,7 +258,7 @@ function ShipmentForm({ shipments, setShipments, backendStatus }) {
         </div>
       </form>
     </div>
-  )
+  );
 }
 
-export default ShipmentForm
+export default ShipmentForm;

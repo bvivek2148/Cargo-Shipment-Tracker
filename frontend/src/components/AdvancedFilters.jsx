@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import { Search, Filter, X, Calendar, Package, Weight, MapPin } from 'lucide-react'
-import { format } from 'date-fns'
+import { useState } from 'react';
+import { Search, Filter, X, Calendar, Package, Weight, MapPin } from 'lucide-react';
+import { format } from 'date-fns';
 
 function AdvancedFilters({ onFiltersChange, initialFilters = {} }) {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false);
   const [filters, setFilters] = useState({
     search: '',
     status: 'all',
@@ -17,43 +17,50 @@ function AdvancedFilters({ onFiltersChange, initialFilters = {} }) {
     priority: 'all',
     sortBy: 'createdAt',
     sortOrder: 'desc',
-    ...initialFilters
-  })
+    ...initialFilters,
+  });
 
   const statusOptions = [
     { value: 'all', label: 'All Status' },
     { value: 'Pending', label: 'Pending' },
     { value: 'In Transit', label: 'In Transit' },
     { value: 'Delivered', label: 'Delivered' },
-    { value: 'Cancelled', label: 'Cancelled' }
-  ]
+    { value: 'Cancelled', label: 'Cancelled' },
+  ];
 
   const priorityOptions = [
     { value: 'all', label: 'All Priorities' },
     { value: 'Low', label: 'Low' },
     { value: 'Medium', label: 'Medium' },
     { value: 'High', label: 'High' },
-    { value: 'Critical', label: 'Critical' }
-  ]
+    { value: 'Critical', label: 'Critical' },
+  ];
 
   const sortOptions = [
     { value: 'createdAt', label: 'Created Date' },
     { value: 'updatedAt', label: 'Updated Date' },
     { value: 'estimatedDelivery', label: 'Delivery Date' },
-    { value: 'trackingNumber', label: 'Tracking Number' }
-  ]
+    { value: 'trackingNumber', label: 'Tracking Number' },
+  ];
 
   const cargoTypes = [
-    'Electronics', 'Textiles', 'Machinery', 'Food & Beverages', 
-    'Chemicals', 'Automotive', 'Pharmaceuticals', 'Raw Materials',
-    'Consumer Goods', 'Industrial Equipment'
-  ]
+    'Electronics',
+    'Textiles',
+    'Machinery',
+    'Food & Beverages',
+    'Chemicals',
+    'Automotive',
+    'Pharmaceuticals',
+    'Raw Materials',
+    'Consumer Goods',
+    'Industrial Equipment',
+  ];
 
   const handleFilterChange = (key, value) => {
-    const newFilters = { ...filters, [key]: value }
-    setFilters(newFilters)
-    onFiltersChange(newFilters)
-  }
+    const newFilters = { ...filters, [key]: value };
+    setFilters(newFilters);
+    onFiltersChange(newFilters);
+  };
 
   const clearFilters = () => {
     const clearedFilters = {
@@ -68,24 +75,26 @@ function AdvancedFilters({ onFiltersChange, initialFilters = {} }) {
       destination: '',
       priority: 'all',
       sortBy: 'createdAt',
-      sortOrder: 'desc'
-    }
-    setFilters(clearedFilters)
-    onFiltersChange(clearedFilters)
-  }
+      sortOrder: 'desc',
+    };
+    setFilters(clearedFilters);
+    onFiltersChange(clearedFilters);
+  };
 
   const hasActiveFilters = () => {
-    return filters.search || 
-           filters.status !== 'all' || 
-           filters.startDate || 
-           filters.endDate || 
-           filters.minWeight || 
-           filters.maxWeight || 
-           filters.cargoType || 
-           filters.origin || 
-           filters.destination || 
-           filters.priority !== 'all'
-  }
+    return (
+      filters.search ||
+      filters.status !== 'all' ||
+      filters.startDate ||
+      filters.endDate ||
+      filters.minWeight ||
+      filters.maxWeight ||
+      filters.cargoType ||
+      filters.origin ||
+      filters.destination ||
+      filters.priority !== 'all'
+    );
+  };
 
   return (
     <div className="advanced-filters">
@@ -100,13 +109,13 @@ function AdvancedFilters({ onFiltersChange, initialFilters = {} }) {
             onChange={(e) => handleFilterChange('search', e.target.value)}
           />
         </div>
-        
+
         <select
           value={filters.status}
           onChange={(e) => handleFilterChange('status', e.target.value)}
           className="status-filter"
         >
-          {statusOptions.map(option => (
+          {statusOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
@@ -191,8 +200,10 @@ function AdvancedFilters({ onFiltersChange, initialFilters = {} }) {
                 onChange={(e) => handleFilterChange('cargoType', e.target.value)}
               >
                 <option value="">All Types</option>
-                {cargoTypes.map(type => (
-                  <option key={type} value={type}>{type}</option>
+                {cargoTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
                 ))}
               </select>
             </div>
@@ -204,7 +215,7 @@ function AdvancedFilters({ onFiltersChange, initialFilters = {} }) {
                 value={filters.priority}
                 onChange={(e) => handleFilterChange('priority', e.target.value)}
               >
-                {priorityOptions.map(option => (
+                {priorityOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
@@ -248,14 +259,14 @@ function AdvancedFilters({ onFiltersChange, initialFilters = {} }) {
                 value={filters.sortBy}
                 onChange={(e) => handleFilterChange('sortBy', e.target.value)}
               >
-                {sortOptions.map(option => (
+                {sortOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
                 ))}
               </select>
             </div>
-            
+
             <div className="sort-group">
               <label>Order</label>
               <select
@@ -270,7 +281,7 @@ function AdvancedFilters({ onFiltersChange, initialFilters = {} }) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default AdvancedFilters
+export default AdvancedFilters;

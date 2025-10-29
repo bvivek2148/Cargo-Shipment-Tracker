@@ -1,8 +1,8 @@
-import { Wifi, WifiOff, Activity } from 'lucide-react'
-import { useSocket } from '../../contexts/SocketContext'
+import { Wifi, WifiOff, Activity } from 'lucide-react';
+import { useSocket } from '../../contexts/SocketContext';
 
 function RealTimeStatus() {
-  const { isConnected } = useSocket()
+  const { isConnected } = useSocket();
 
   return (
     <div className={`realtime-status ${isConnected ? 'connected' : 'disconnected'}`}>
@@ -20,7 +20,7 @@ function RealTimeStatus() {
         )}
       </div>
     </div>
-  )
+  );
 }
 
-export default RealTimeStatus
+export default RealTimeStatus;

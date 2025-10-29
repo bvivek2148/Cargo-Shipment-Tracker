@@ -1,64 +1,64 @@
-import { useState, useRef, useEffect } from 'react'
-import { Sun, Moon, Monitor, Check } from 'lucide-react'
-import { useTheme } from '../../contexts/ThemeContext'
+import { useState, useRef, useEffect } from 'react';
+import { Sun, Moon, Monitor, Check } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
 
 function ThemeToggle() {
-  const { isDarkMode, themeMode, toggleTheme, setTheme } = useTheme()
-  const [isOpen, setIsOpen] = useState(false)
-  const dropdownRef = useRef(null)
+  const { isDarkMode, themeMode, toggleTheme, setTheme } = useTheme();
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false)
+        setIsOpen(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const themeOptions = [
     {
       id: 'light',
       label: 'Light',
       icon: Sun,
-      description: 'Light theme'
+      description: 'Light theme',
     },
     {
       id: 'dark',
       label: 'Dark',
       icon: Moon,
-      description: 'Dark theme'
+      description: 'Dark theme',
     },
     {
       id: 'system',
       label: 'System',
       icon: Monitor,
-      description: 'Follow system preference'
-    }
-  ]
+      description: 'Follow system preference',
+    },
+  ];
 
   const getCurrentIcon = () => {
     switch (themeMode) {
       case 'light':
-        return Sun
+        return Sun;
       case 'dark':
-        return Moon
+        return Moon;
       case 'system':
-        return Monitor
+        return Monitor;
       default:
-        return isDarkMode ? Moon : Sun
+        return isDarkMode ? Moon : Sun;
     }
-  }
+  };
 
   const handleThemeSelect = (mode) => {
-    setTheme(mode)
-    setIsOpen(false)
-  }
+    setTheme(mode);
+    setIsOpen(false);
+  };
 
-  const CurrentIcon = getCurrentIcon()
+  const CurrentIcon = getCurrentIcon();
 
   return (
     <div className="theme-toggle" ref={dropdownRef}>
@@ -80,9 +80,9 @@ function ThemeToggle() {
           </div>
           <div className="theme-options">
             {themeOptions.map((option) => {
-              const Icon = option.icon
-              const isSelected = themeMode === option.id
-              
+              const Icon = option.icon;
+              const isSelected = themeMode === option.id;
+
               return (
                 <button
                   key={option.id}
@@ -105,13 +105,13 @@ function ThemeToggle() {
                     </div>
                   )}
                 </button>
-              )
+              );
             })}
           </div>
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default ThemeToggle
+export default ThemeToggle;

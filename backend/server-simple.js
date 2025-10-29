@@ -47,7 +47,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cargo-shi
   });
 
 // Error handling middleware
-app.use((err, req, res, next) => {
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, _next) => {
   console.error('Error:', err);
   res.status(500).json({
     success: false,

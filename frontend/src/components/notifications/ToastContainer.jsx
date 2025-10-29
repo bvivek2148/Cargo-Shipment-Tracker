@@ -1,4 +1,4 @@
-import { Toaster } from 'react-hot-toast'
+import { Toaster } from 'react-hot-toast';
 
 function ToastContainer() {
   return (
@@ -20,7 +20,7 @@ function ToastContainer() {
           fontSize: '14px',
           fontWeight: '500',
           boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-          maxWidth: '400px'
+          maxWidth: '400px',
         },
 
         // Default options for specific types
@@ -28,37 +28,37 @@ function ToastContainer() {
           duration: 3000,
           style: {
             background: '#10b981',
-            color: '#fff'
+            color: '#fff',
           },
           iconTheme: {
             primary: '#fff',
-            secondary: '#10b981'
-          }
+            secondary: '#10b981',
+          },
         },
         error: {
           duration: 5000,
           style: {
             background: '#ef4444',
-            color: '#fff'
+            color: '#fff',
           },
           iconTheme: {
             primary: '#fff',
-            secondary: '#ef4444'
-          }
+            secondary: '#ef4444',
+          },
         },
         loading: {
           style: {
             background: '#3b82f6',
-            color: '#fff'
+            color: '#fff',
           },
           iconTheme: {
             primary: '#fff',
-            secondary: '#3b82f6'
-          }
-        }
+            secondary: '#3b82f6',
+          },
+        },
       }}
     />
-  )
+  );
 }
 
-export default ToastContainer
+export default ToastContainer;

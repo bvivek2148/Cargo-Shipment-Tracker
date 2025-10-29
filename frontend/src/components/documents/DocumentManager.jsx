@@ -1,7 +1,23 @@
-import { useState, useRef, useCallback } from 'react'
-import { Upload, File, Image, FileText, Download, Eye, Trash2, Plus, Search, Filter, FolderPlus, Folder, Star, Clock, User } from 'lucide-react'
-import { useDropzone } from 'react-dropzone'
-import toast from 'react-hot-toast'
+import { useState, useRef, useCallback } from 'react';
+import {
+  Upload,
+  File,
+  Image,
+  FileText,
+  Download,
+  Eye,
+  Trash2,
+  Plus,
+  Search,
+  Filter,
+  FolderPlus,
+  Folder,
+  Star,
+  Clock,
+  User,
+} from 'lucide-react';
+import { useDropzone } from 'react-dropzone';
+import toast from 'react-hot-toast';
 
 // Document categories and types
 const DOCUMENT_CATEGORIES = {
@@ -9,33 +25,33 @@ const DOCUMENT_CATEGORIES = {
     name: 'Shipping Documents',
     icon: '🚢',
     color: '#3b82f6',
-    types: ['Bill of Lading', 'Commercial Invoice', 'Packing List', 'Certificate of Origin']
+    types: ['Bill of Lading', 'Commercial Invoice', 'Packing List', 'Certificate of Origin'],
   },
   CUSTOMS: {
     name: 'Customs & Compliance',
     icon: '🛃',
     color: '#f59e0b',
-    types: ['Export Declaration', 'Import License', 'Customs Invoice', 'Duty Assessment']
+    types: ['Export Declaration', 'Import License', 'Customs Invoice', 'Duty Assessment'],
   },
   INSURANCE: {
     name: 'Insurance & Risk',
     icon: '🛡️',
     color: '#10b981',
-    types: ['Insurance Certificate', 'Risk Assessment', 'Damage Report', 'Claim Form']
+    types: ['Insurance Certificate', 'Risk Assessment', 'Damage Report', 'Claim Form'],
   },
   QUALITY: {
     name: 'Quality & Inspection',
     icon: '✅',
     color: '#8b5cf6',
-    types: ['Inspection Certificate', 'Quality Report', 'Test Results', 'Compliance Certificate']
+    types: ['Inspection Certificate', 'Quality Report', 'Test Results', 'Compliance Certificate'],
   },
   FINANCIAL: {
     name: 'Financial Documents',
     icon: '💰',
     color: '#ef4444',
-    types: ['Payment Receipt', 'Credit Note', 'Bank Guarantee', 'Letter of Credit']
-  }
-}
+    types: ['Payment Receipt', 'Credit Note', 'Bank Guarantee', 'Letter of Credit'],
+  },
+};
 
 const FILE_TYPES = {
   'application/pdf': { icon: FileText, color: '#ef4444', name: 'PDF' },
@@ -43,22 +59,30 @@ const FILE_TYPES = {
   'image/png': { icon: Image, color: '#10b981', name: 'PNG' },
   'image/gif': { icon: Image, color: '#10b981', name: 'GIF' },
   'application/msword': { icon: FileText, color: '#2563eb', name: 'DOC' },
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': { icon: FileText, color: '#2563eb', name: 'DOCX' },
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
+    icon: FileText,
+    color: '#2563eb',
+    name: 'DOCX',
+  },
   'application/vnd.ms-excel': { icon: FileText, color: '#16a34a', name: 'XLS' },
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': { icon: FileText, color: '#16a34a', name: 'XLSX' },
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
+    icon: FileText,
+    color: '#16a34a',
+    name: 'XLSX',
+  },
   'text/plain': { icon: File, color: '#6b7280', name: 'TXT' },
-  'default': { icon: File, color: '#6b7280', name: 'FILE' }
-}
+  default: { icon: File, color: '#6b7280', name: 'FILE' },
+};
 
 function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
-  const [selectedCategory, setSelectedCategory] = useState('ALL')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [sortBy, setSortBy] = useState('date')
-  const [viewMode, setViewMode] = useState('grid') // grid or list
-  const [selectedDocuments, setSelectedDocuments] = useState([])
-  const [isUploading, setIsUploading] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState({})
-  const fileInputRef = useRef(null)
+  const [selectedCategory, setSelectedCategory] = useState('ALL');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('date');
+  const [viewMode, setViewMode] = useState('grid'); // grid or list
+  const [selectedDocuments, setSelectedDocuments] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({});
+  const fileInputRef = useRef(null);
 
   // Sample documents with enhanced metadata
   const [allDocuments, setAllDocuments] = useState([
@@ -79,7 +103,7 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
       thumbnail: '/thumbnails/bill-of-lading-cst001.jpg',
       isStarred: true,
       lastViewed: new Date('2024-01-12T14:20:00'),
-      viewCount: 5
+      viewCount: 5,
     },
     {
       id: '2',
@@ -98,7 +122,7 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
       thumbnail: '/thumbnails/commercial-invoice-cst001.jpg',
       isStarred: false,
       lastViewed: new Date('2024-01-11T09:45:00'),
-      viewCount: 3
+      viewCount: 3,
     },
     {
       id: '3',
@@ -117,7 +141,7 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
       thumbnail: '/thumbnails/packing-list-cst001.jpg',
       isStarred: false,
       lastViewed: new Date('2024-01-10T16:30:00'),
-      viewCount: 2
+      viewCount: 2,
     },
     {
       id: '4',
@@ -136,16 +160,16 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
       thumbnail: '/thumbnails/insurance-certificate.jpg',
       isStarred: true,
       lastViewed: new Date('2024-01-12T11:10:00'),
-      viewCount: 7
-    }
-  ])
+      viewCount: 7,
+    },
+  ]);
 
   // File upload handling with drag & drop
   const onDrop = useCallback((acceptedFiles) => {
-    acceptedFiles.forEach(file => {
-      uploadFile(file)
-    })
-  }, [])
+    acceptedFiles.forEach((file) => {
+      uploadFile(file);
+    });
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -156,22 +180,22 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
       'application/vnd.ms-excel': ['.xls'],
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
-      'text/plain': ['.txt']
+      'text/plain': ['.txt'],
     },
     maxSize: 10 * 1024 * 1024, // 10MB
-    multiple: true
-  })
+    multiple: true,
+  });
 
   const uploadFile = async (file) => {
-    setIsUploading(true)
-    const fileId = Date.now().toString()
-    
+    setIsUploading(true);
+    const fileId = Date.now().toString();
+
     // Simulate upload progress
-    setUploadProgress(prev => ({ ...prev, [fileId]: 0 }))
-    
+    setUploadProgress((prev) => ({ ...prev, [fileId]: 0 }));
+
     for (let progress = 0; progress <= 100; progress += 10) {
-      await new Promise(resolve => setTimeout(resolve, 100))
-      setUploadProgress(prev => ({ ...prev, [fileId]: progress }))
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      setUploadProgress((prev) => ({ ...prev, [fileId]: progress }));
     }
 
     // Create new document entry
@@ -192,96 +216,97 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
       thumbnail: null,
       isStarred: false,
       lastViewed: null,
-      viewCount: 0
-    }
+      viewCount: 0,
+    };
 
-    setAllDocuments(prev => [newDocument, ...prev])
-    setUploadProgress(prev => {
-      const { [fileId]: removed, ...rest } = prev
-      return rest
-    })
-    setIsUploading(false)
+    setAllDocuments((prev) => [newDocument, ...prev]);
+    setUploadProgress((prev) => {
+      const { [fileId]: removed, ...rest } = prev;
+      return rest;
+    });
+    setIsUploading(false);
 
-    toast.success(`${file.name} uploaded successfully`)
-    
+    toast.success(`${file.name} uploaded successfully`);
+
     if (onDocumentUpdate) {
-      onDocumentUpdate([newDocument, ...allDocuments])
+      onDocumentUpdate([newDocument, ...allDocuments]);
     }
-  }
+  };
 
   const handleFileSelect = () => {
-    fileInputRef.current?.click()
-  }
+    fileInputRef.current?.click();
+  };
 
   const handleFileChange = (event) => {
-    const files = Array.from(event.target.files || [])
-    files.forEach(uploadFile)
-    event.target.value = '' // Reset input
-  }
+    const files = Array.from(event.target.files || []);
+    files.forEach(uploadFile);
+    event.target.value = ''; // Reset input
+  };
 
   const toggleStar = (docId) => {
-    setAllDocuments(prev => prev.map(doc => 
-      doc.id === docId ? { ...doc, isStarred: !doc.isStarred } : doc
-    ))
-  }
+    setAllDocuments((prev) =>
+      prev.map((doc) => (doc.id === docId ? { ...doc, isStarred: !doc.isStarred } : doc))
+    );
+  };
 
   const deleteDocument = (docId) => {
-    setAllDocuments(prev => prev.filter(doc => doc.id !== docId))
-    toast.success('Document deleted successfully')
-  }
+    setAllDocuments((prev) => prev.filter((doc) => doc.id !== docId));
+    toast.success('Document deleted successfully');
+  };
 
   const downloadDocument = (doc) => {
     // Simulate download
-    const link = document.createElement('a')
-    link.href = doc.url
-    link.download = doc.name
-    link.click()
-    toast.success(`Downloading ${doc.name}`)
-  }
+    const link = document.createElement('a');
+    link.href = doc.url;
+    link.download = doc.name;
+    link.click();
+    toast.success(`Downloading ${doc.name}`);
+  };
 
   const viewDocument = (doc) => {
     // Update view count and last viewed
-    setAllDocuments(prev => prev.map(d => 
-      d.id === doc.id 
-        ? { ...d, viewCount: d.viewCount + 1, lastViewed: new Date() }
-        : d
-    ))
-    
+    setAllDocuments((prev) =>
+      prev.map((d) =>
+        d.id === doc.id ? { ...d, viewCount: d.viewCount + 1, lastViewed: new Date() } : d
+      )
+    );
+
     // Open document viewer (would open in modal/new tab)
-    window.open(doc.url, '_blank')
-    toast.success(`Opening ${doc.name}`)
-  }
+    window.open(doc.url, '_blank');
+    toast.success(`Opening ${doc.name}`);
+  };
 
   // Filter and sort documents
   const filteredDocuments = allDocuments
-    .filter(doc => {
-      const matchesCategory = selectedCategory === 'ALL' || doc.category === selectedCategory
-      const matchesSearch = doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           doc.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           doc.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-      return matchesCategory && matchesSearch
+    .filter((doc) => {
+      const matchesCategory = selectedCategory === 'ALL' || doc.category === selectedCategory;
+      const matchesSearch =
+        doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        doc.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        doc.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+      return matchesCategory && matchesSearch;
     })
     .sort((a, b) => {
       switch (sortBy) {
         case 'name':
-          return a.name.localeCompare(b.name)
+          return a.name.localeCompare(b.name);
         case 'size':
-          return b.size - a.size
+          return b.size - a.size;
         case 'type':
-          return a.type.localeCompare(b.type)
+          return a.type.localeCompare(b.type);
         case 'date':
         default:
-          return new Date(b.uploadedAt) - new Date(a.uploadedAt)
+          return new Date(b.uploadedAt) - new Date(a.uploadedAt);
       }
-    })
+    });
 
   const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes'
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-  }
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
 
   const formatDate = (date) => {
     return date.toLocaleDateString('en-US', {
@@ -289,24 +314,28 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
+      minute: '2-digit',
+    });
+  };
 
   const getFileIcon = (type) => {
-    const fileType = FILE_TYPES[type] || FILE_TYPES.default
-    const IconComponent = fileType.icon
-    return <IconComponent size={20} style={{ color: fileType.color }} />
-  }
+    const fileType = FILE_TYPES[type] || FILE_TYPES.default;
+    const IconComponent = fileType.icon;
+    return <IconComponent size={20} style={{ color: fileType.color }} />;
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'approved': return 'status-approved'
-      case 'pending': return 'status-pending'
-      case 'rejected': return 'status-rejected'
-      default: return 'status-default'
+      case 'approved':
+        return 'status-approved';
+      case 'pending':
+        return 'status-pending';
+      case 'rejected':
+        return 'status-rejected';
+      default:
+        return 'status-default';
     }
-  }
+  };
 
   return (
     <div className="document-manager">
@@ -315,7 +344,7 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
           <h3>📄 Document Manager</h3>
           <span className="document-count">{filteredDocuments.length} documents</span>
         </div>
-        
+
         <div className="header-actions">
           <button onClick={handleFileSelect} className="btn btn-primary">
             <Plus size={16} />
@@ -337,9 +366,7 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
         <input {...getInputProps()} />
         <div className="upload-content">
           <Upload size={48} />
-          <h4>
-            {isDragActive ? 'Drop files here...' : 'Drag & drop files here'}
-          </h4>
+          <h4>{isDragActive ? 'Drop files here...' : 'Drag & drop files here'}</h4>
           <p>or click to select files</p>
           <div className="upload-info">
             <span>Supported: PDF, DOC, XLS, Images</span>
@@ -355,10 +382,7 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
           {Object.entries(uploadProgress).map(([fileId, progress]) => (
             <div key={fileId} className="progress-item">
               <div className="progress-bar">
-                <div 
-                  className="progress-fill" 
-                  style={{ width: `${progress}%` }}
-                ></div>
+                <div className="progress-fill" style={{ width: `${progress}%` }}></div>
               </div>
               <span className="progress-text">{progress}%</span>
             </div>
@@ -378,12 +402,9 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          
+
           <div className="category-filter">
-            <select 
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
+            <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
               <option value="ALL">All Categories</option>
               {Object.entries(DOCUMENT_CATEGORIES).map(([key, category]) => (
                 <option key={key} value={key}>
@@ -392,12 +413,9 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
               ))}
             </select>
           </div>
-          
+
           <div className="sort-filter">
-            <select 
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
               <option value="date">Sort by Date</option>
               <option value="name">Sort by Name</option>
               <option value="size">Sort by Size</option>
@@ -409,14 +427,12 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
 
       {/* Document Grid/List */}
       <div className={`documents-container ${viewMode}`}>
-        {filteredDocuments.map(doc => (
+        {filteredDocuments.map((doc) => (
           <div key={doc.id} className="document-card">
             <div className="document-header">
-              <div className="document-icon">
-                {getFileIcon(doc.type)}
-              </div>
+              <div className="document-icon">{getFileIcon(doc.type)}</div>
               <div className="document-actions">
-                <button 
+                <button
                   onClick={() => toggleStar(doc.id)}
                   className={`star-btn ${doc.isStarred ? 'starred' : ''}`}
                 >
@@ -433,11 +449,11 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
                 </button>
               </div>
             </div>
-            
+
             <div className="document-content">
               <h4 className="document-name">{doc.name}</h4>
               <p className="document-description">{doc.description}</p>
-              
+
               <div className="document-meta">
                 <span className="document-size">{formatFileSize(doc.size)}</span>
                 <span className={`document-status ${getStatusColor(doc.status)}`}>
@@ -445,13 +461,15 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
                 </span>
                 <span className="document-version">v{doc.version}</span>
               </div>
-              
+
               <div className="document-tags">
-                {doc.tags.map(tag => (
-                  <span key={tag} className="tag">{tag}</span>
+                {doc.tags.map((tag) => (
+                  <span key={tag} className="tag">
+                    {tag}
+                  </span>
                 ))}
               </div>
-              
+
               <div className="document-footer">
                 <div className="upload-info">
                   <User size={14} />
@@ -475,7 +493,7 @@ function DocumentManager({ shipmentId, documents = [], onDocumentUpdate }) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default DocumentManager
+export default DocumentManager;

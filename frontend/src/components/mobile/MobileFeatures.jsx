@@ -1,41 +1,41 @@
-import { useState, useEffect } from 'react'
-import { Bell, BellOff, Smartphone, Share, QrCode, Camera, Vibrate, Volume2 } from 'lucide-react'
-import { usePWAInstall } from '../pwa/PWAManager'
-import toast from 'react-hot-toast'
+import { useState, useEffect } from 'react';
+import { Bell, BellOff, Smartphone, Share, QrCode, Camera, Vibrate, Volume2 } from 'lucide-react';
+import { usePWAInstall } from '../pwa/PWAManager';
+import toast from 'react-hot-toast';
 
 // Mobile-specific features for PWA
 function MobileFeatures() {
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false)
-  const [notificationPermission, setNotificationPermission] = useState('default')
-  const [vibrationSupported, setVibrationSupported] = useState(false)
-  const [shareSupported, setShareSupported] = useState(false)
-  const [cameraSupported, setCameraSupported] = useState(false)
-  const [deviceInfo, setDeviceInfo] = useState({})
-  const { isInstallable, isInstalled, install } = usePWAInstall()
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [notificationPermission, setNotificationPermission] = useState('default');
+  const [vibrationSupported, setVibrationSupported] = useState(false);
+  const [shareSupported, setShareSupported] = useState(false);
+  const [cameraSupported, setCameraSupported] = useState(false);
+  const [deviceInfo, setDeviceInfo] = useState({});
+  const { isInstallable, isInstalled, install } = usePWAInstall();
 
   useEffect(() => {
-    checkFeatureSupport()
-    loadNotificationSettings()
-    getDeviceInfo()
-  }, [])
+    checkFeatureSupport();
+    loadNotificationSettings();
+    getDeviceInfo();
+  }, []);
 
   const checkFeatureSupport = () => {
     // Check vibration support
-    setVibrationSupported('vibrate' in navigator)
-    
+    setVibrationSupported('vibrate' in navigator);
+
     // Check Web Share API support
-    setShareSupported('share' in navigator)
-    
+    setShareSupported('share' in navigator);
+
     // Check camera/media support
-    setCameraSupported('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices)
-  }
+    setCameraSupported('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices);
+  };
 
   const loadNotificationSettings = () => {
     if ('Notification' in window) {
-      setNotificationPermission(Notification.permission)
-      setNotificationsEnabled(Notification.permission === 'granted')
+      setNotificationPermission(Notification.permission);
+      setNotificationsEnabled(Notification.permission === 'granted');
     }
-  }
+  };
 
   const getDeviceInfo = () => {
     const info = {
@@ -50,51 +50,51 @@ function MobileFeatures() {
       viewportHeight: window.innerHeight,
       devicePixelRatio: window.devicePixelRatio || 1,
       touchSupported: 'ontouchstart' in window,
-      standalone: window.matchMedia('(display-mode: standalone)').matches
-    }
-    
-    setDeviceInfo(info)
-  }
+      standalone: window.matchMedia('(display-mode: standalone)').matches,
+    };
+
+    setDeviceInfo(info);
+  };
 
   const requestNotificationPermission = async () => {
     if (!('Notification' in window)) {
-      toast.error('Notifications not supported on this device')
-      return
+      toast.error('Notifications not supported on this device');
+      return;
     }
 
     try {
-      const permission = await Notification.requestPermission()
-      setNotificationPermission(permission)
-      
+      const permission = await Notification.requestPermission();
+      setNotificationPermission(permission);
+
       if (permission === 'granted') {
-        setNotificationsEnabled(true)
-        toast.success('Notifications enabled!')
-        
+        setNotificationsEnabled(true);
+        toast.success('Notifications enabled!');
+
         // Subscribe to push notifications
-        await subscribeToPushNotifications()
-        
+        await subscribeToPushNotifications();
+
         // Show welcome notification
-        showTestNotification()
+        showTestNotification();
       } else {
-        setNotificationsEnabled(false)
-        toast.error('Notification permission denied')
+        setNotificationsEnabled(false);
+        toast.error('Notification permission denied');
       }
     } catch (error) {
-      console.error('Notification permission error:', error)
-      toast.error('Failed to enable notifications')
+      console.error('Notification permission error:', error);
+      toast.error('Failed to enable notifications');
     }
-  }
+  };
 
   const subscribeToPushNotifications = async () => {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
       try {
-        const registration = await navigator.serviceWorker.ready
-        
+        const registration = await navigator.serviceWorker.ready;
+
         // Check if already subscribed
-        const existingSubscription = await registration.pushManager.getSubscription()
+        const existingSubscription = await registration.pushManager.getSubscription();
         if (existingSubscription) {
-          console.log('Already subscribed to push notifications')
-          return
+          console.log('Already subscribed to push notifications');
+          return;
         }
 
         // Subscribe to push notifications
@@ -102,18 +102,18 @@ function MobileFeatures() {
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(
             'BEl62iUYgUivxIkv69yViEuiBIa40HI80NM9LdNnC_NNPB6Pv6RgQoOhSzlfdJ3_QkSfHcFcsr31QWdFzAOGiA' // Demo VAPID key
-          )
-        })
+          ),
+        });
 
         // Send subscription to server
-        await sendSubscriptionToServer(subscription)
-        
-        console.log('Subscribed to push notifications:', subscription)
+        await sendSubscriptionToServer(subscription);
+
+        console.log('Subscribed to push notifications:', subscription);
       } catch (error) {
-        console.error('Push subscription failed:', error)
+        console.error('Push subscription failed:', error);
       }
     }
-  }
+  };
 
   const sendSubscriptionToServer = async (subscription) => {
     try {
@@ -121,62 +121,60 @@ function MobileFeatures() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify(subscription)
-      })
+        body: JSON.stringify(subscription),
+      });
     } catch (error) {
-      console.error('Failed to send subscription to server:', error)
+      console.error('Failed to send subscription to server:', error);
     }
-  }
+  };
 
   const urlBase64ToUint8Array = (base64String) => {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4)
-    const base64 = (base64String + padding)
-      .replace(/-/g, '+')
-      .replace(/_/g, '/')
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
 
-    const rawData = window.atob(base64)
-    const outputArray = new Uint8Array(rawData.length)
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
 
     for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i)
+      outputArray[i] = rawData.charCodeAt(i);
     }
-    return outputArray
-  }
+    return outputArray;
+  };
 
   const showTestNotification = () => {
     if (notificationsEnabled) {
       new Notification('Cargo Tracker', {
-        body: 'Notifications are now enabled! You\'ll receive updates about your shipments.',
+        body: "Notifications are now enabled! You'll receive updates about your shipments.",
         icon: '/icons/icon-192x192.png',
         badge: '/icons/badge-72x72.png',
         tag: 'welcome',
-        vibrate: [200, 100, 200]
-      })
+        vibrate: [200, 100, 200],
+      });
     }
-  }
+  };
 
   const disableNotifications = async () => {
-    setNotificationsEnabled(false)
-    
+    setNotificationsEnabled(false);
+
     // Unsubscribe from push notifications
     if ('serviceWorker' in navigator) {
       try {
-        const registration = await navigator.serviceWorker.ready
-        const subscription = await registration.pushManager.getSubscription()
-        
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
+
         if (subscription) {
-          await subscription.unsubscribe()
-          console.log('Unsubscribed from push notifications')
+          await subscription.unsubscribe();
+          console.log('Unsubscribed from push notifications');
         }
       } catch (error) {
-        console.error('Failed to unsubscribe:', error)
+        console.error('Failed to unsubscribe:', error);
       }
     }
-    
-    toast.success('Notifications disabled')
-  }
+
+    toast.success('Notifications disabled');
+  };
 
   const shareApp = async () => {
     if (shareSupported) {
@@ -184,77 +182,80 @@ function MobileFeatures() {
         await navigator.share({
           title: 'Cargo Shipment Tracker',
           text: 'Track your shipments in real-time with this professional cargo tracking app',
-          url: window.location.origin
-        })
+          url: window.location.origin,
+        });
       } catch (error) {
         if (error.name !== 'AbortError') {
-          console.error('Share failed:', error)
-          fallbackShare()
+          console.error('Share failed:', error);
+          fallbackShare();
         }
       }
     } else {
-      fallbackShare()
+      fallbackShare();
     }
-  }
+  };
 
   const fallbackShare = () => {
     // Copy URL to clipboard
-    navigator.clipboard.writeText(window.location.origin)
+    navigator.clipboard
+      .writeText(window.location.origin)
       .then(() => {
-        toast.success('App URL copied to clipboard!')
+        toast.success('App URL copied to clipboard!');
       })
       .catch(() => {
-        toast.error('Failed to copy URL')
-      })
-  }
+        toast.error('Failed to copy URL');
+      });
+  };
 
   const testVibration = () => {
     if (vibrationSupported) {
-      navigator.vibrate([200, 100, 200, 100, 200])
-      toast.success('Vibration test completed')
+      navigator.vibrate([200, 100, 200, 100, 200]);
+      toast.success('Vibration test completed');
     } else {
-      toast.error('Vibration not supported on this device')
+      toast.error('Vibration not supported on this device');
     }
-  }
+  };
 
   const generateQRCode = () => {
     // In a real implementation, this would generate a QR code
     // For demo, we'll show a placeholder
-    toast.success('QR code feature would generate a code for easy sharing')
-  }
+    toast.success('QR code feature would generate a code for easy sharing');
+  };
 
   const testCamera = async () => {
     if (!cameraSupported) {
-      toast.error('Camera not supported on this device')
-      return
+      toast.error('Camera not supported on this device');
+      return;
     }
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } // Use back camera
-      })
-      
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' }, // Use back camera
+      });
+
       // Stop the stream immediately (just testing access)
-      stream.getTracks().forEach(track => track.stop())
-      
-      toast.success('Camera access granted! Ready for QR code scanning.')
+      stream.getTracks().forEach((track) => track.stop());
+
+      toast.success('Camera access granted! Ready for QR code scanning.');
     } catch (error) {
-      console.error('Camera access failed:', error)
-      toast.error('Camera access denied or not available')
+      console.error('Camera access failed:', error);
+      toast.error('Camera access denied or not available');
     }
-  }
+  };
 
   const isMobile = () => {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-  }
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+  };
 
   const isIOS = () => {
-    return /iPad|iPhone|iPod/.test(navigator.userAgent)
-  }
+    return /iPad|iPhone|iPod/.test(navigator.userAgent);
+  };
 
   const isAndroid = () => {
-    return /Android/.test(navigator.userAgent)
-  }
+    return /Android/.test(navigator.userAgent);
+  };
 
   return (
     <div className="mobile-features">
@@ -305,7 +306,7 @@ function MobileFeatures() {
         <div className="pwa-install">
           <h4>📲 Install App</h4>
           <p>Install the app for the best mobile experience</p>
-          
+
           {isInstallable ? (
             <button onClick={install} className="btn btn-primary">
               <Smartphone size={16} />
@@ -319,9 +320,7 @@ function MobileFeatures() {
                 </p>
               )}
               {isAndroid() && (
-                <p>
-                  On Android: Tap the menu button and select "Add to Home Screen"
-                </p>
+                <p>On Android: Tap the menu button and select "Add to Home Screen"</p>
               )}
             </div>
           )}
@@ -332,7 +331,7 @@ function MobileFeatures() {
       <div className="notifications-section">
         <h4>🔔 Push Notifications</h4>
         <p>Get real-time updates about your shipments</p>
-        
+
         <div className="notification-controls">
           {notificationsEnabled ? (
             <div className="notification-enabled">
@@ -355,10 +354,9 @@ function MobileFeatures() {
               <div className="status-indicator">
                 <BellOff size={20} />
                 <span>
-                  {notificationPermission === 'denied' 
-                    ? 'Notifications Blocked' 
-                    : 'Notifications Disabled'
-                  }
+                  {notificationPermission === 'denied'
+                    ? 'Notifications Blocked'
+                    : 'Notifications Disabled'}
                 </span>
               </div>
               {notificationPermission !== 'denied' && (
@@ -375,7 +373,7 @@ function MobileFeatures() {
       {/* Mobile Features */}
       <div className="mobile-capabilities">
         <h4>🚀 Mobile Capabilities</h4>
-        
+
         <div className="capabilities-grid">
           {/* Vibration */}
           <div className="capability-item">
@@ -384,7 +382,7 @@ function MobileFeatures() {
               <span>Haptic Feedback</span>
             </div>
             <p>Feel notifications and interactions</p>
-            <button 
+            <button
               onClick={testVibration}
               disabled={!vibrationSupported}
               className="btn btn-secondary"
@@ -424,11 +422,7 @@ function MobileFeatures() {
               <span>Camera Access</span>
             </div>
             <p>Scan QR codes and documents</p>
-            <button 
-              onClick={testCamera}
-              disabled={!cameraSupported}
-              className="btn btn-secondary"
-            >
+            <button onClick={testCamera} disabled={!cameraSupported} className="btn btn-secondary">
               {cameraSupported ? 'Test Camera' : 'Not Supported'}
             </button>
           </div>
@@ -462,7 +456,7 @@ function MobileFeatures() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default MobileFeatures
+export default MobileFeatures;

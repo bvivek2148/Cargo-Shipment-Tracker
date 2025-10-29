@@ -1,126 +1,126 @@
-import { useState } from 'react'
-import { X, Download, FileText, FileSpreadsheet, FileImage, Calendar, Filter } from 'lucide-react'
-import { format } from 'date-fns'
-import exportService from '../services/exportService'
+import { useState } from 'react';
+import { X, Download, FileText, FileSpreadsheet, FileImage, Calendar, Filter } from 'lucide-react';
+import { format } from 'date-fns';
+import exportService from '../services/exportService';
 
 function ExportModal({ isOpen, onClose, shipments, filters }) {
-  const [exportFormat, setExportFormat] = useState('csv')
-  const [exportScope, setExportScope] = useState('filtered')
-  const [isExporting, setIsExporting] = useState(false)
-  const [exportResult, setExportResult] = useState(null)
+  const [exportFormat, setExportFormat] = useState('csv');
+  const [exportScope, setExportScope] = useState('filtered');
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportResult, setExportResult] = useState(null);
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   const exportOptions = [
     {
       value: 'csv',
       label: 'CSV Spreadsheet',
       icon: FileSpreadsheet,
-      description: 'Export data in CSV format for Excel or Google Sheets'
+      description: 'Export data in CSV format for Excel or Google Sheets',
     },
     {
       value: 'pdf',
       label: 'PDF Report',
       icon: FileText,
-      description: 'Generate a formatted PDF report with summary'
+      description: 'Generate a formatted PDF report with summary',
     },
     {
       value: 'detailed',
       label: 'Detailed PDF Report',
       icon: FileImage,
-      description: 'Comprehensive PDF report with full shipment details'
-    }
-  ]
+      description: 'Comprehensive PDF report with full shipment details',
+    },
+  ];
 
   const scopeOptions = [
     {
       value: 'filtered',
       label: 'Current View',
-      description: `Export ${shipments.length} shipments from current filters`
+      description: `Export ${shipments.length} shipments from current filters`,
     },
     {
       value: 'all',
       label: 'All Shipments',
-      description: 'Export all shipments regardless of filters'
-    }
-  ]
+      description: 'Export all shipments regardless of filters',
+    },
+  ];
 
   const handleExport = async () => {
-    setIsExporting(true)
-    setExportResult(null)
+    setIsExporting(true);
+    setExportResult(null);
 
     try {
-      let dataToExport = shipments
-      let filename = 'shipments'
+      let dataToExport = shipments;
+      let filename = 'shipments';
 
       // Determine filename based on scope and filters
       if (exportScope === 'filtered') {
-        filename = 'filtered_shipments'
+        filename = 'filtered_shipments';
         if (filters.status !== 'all') {
-          filename += `_${filters.status.toLowerCase().replace(' ', '_')}`
+          filename += `_${filters.status.toLowerCase().replace(' ', '_')}`;
         }
         if (filters.startDate || filters.endDate) {
-          filename += '_date_range'
+          filename += '_date_range';
         }
       } else {
-        filename = 'all_shipments'
+        filename = 'all_shipments';
       }
 
-      let result
+      let result;
       switch (exportFormat) {
         case 'csv':
-          result = exportService.exportToCSV(dataToExport, filename)
-          break
+          result = exportService.exportToCSV(dataToExport, filename);
+          break;
         case 'pdf':
-          result = exportService.exportToPDF(dataToExport, filename)
-          break
+          result = exportService.exportToPDF(dataToExport, filename);
+          break;
         case 'detailed':
-          result = exportService.exportDetailedReport(dataToExport, filename)
-          break
+          result = exportService.exportDetailedReport(dataToExport, filename);
+          break;
         default:
-          throw new Error('Invalid export format')
+          throw new Error('Invalid export format');
       }
 
-      setExportResult(result)
-      
+      setExportResult(result);
+
       if (result.success) {
         setTimeout(() => {
-          onClose()
-          setExportResult(null)
-        }, 2000)
+          onClose();
+          setExportResult(null);
+        }, 2000);
       }
     } catch (error) {
       setExportResult({
         success: false,
-        message: 'Export failed: ' + error.message
-      })
+        message: 'Export failed: ' + error.message,
+      });
     } finally {
-      setIsExporting(false)
+      setIsExporting(false);
     }
-  }
+  };
 
   const getActiveFiltersText = () => {
-    const activeFilters = []
-    
+    const activeFilters = [];
+
     if (filters.status !== 'all') {
-      activeFilters.push(`Status: ${filters.status}`)
+      activeFilters.push(`Status: ${filters.status}`);
     }
     if (filters.search) {
-      activeFilters.push(`Search: "${filters.search}"`)
+      activeFilters.push(`Search: "${filters.search}"`);
     }
     if (filters.startDate || filters.endDate) {
-      const dateRange = `${filters.startDate || 'Start'} to ${filters.endDate || 'End'}`
-      activeFilters.push(`Date Range: ${dateRange}`)
+      const dateRange = `${filters.startDate || 'Start'} to ${filters.endDate || 'End'}`;
+      activeFilters.push(`Date Range: ${dateRange}`);
     }
     if (filters.cargoType) {
-      activeFilters.push(`Cargo: ${filters.cargoType}`)
+      activeFilters.push(`Cargo: ${filters.cargoType}`);
     }
     if (filters.priority !== 'all') {
-      activeFilters.push(`Priority: ${filters.priority}`)
+      activeFilters.push(`Priority: ${filters.priority}`);
     }
 
-    return activeFilters.length > 0 ? activeFilters.join(', ') : 'No filters applied'
-  }
+    return activeFilters.length > 0 ? activeFilters.join(', ') : 'No filters applied';
+  };
 
   return (
     <div className="modal-overlay">
@@ -140,7 +140,7 @@ function ExportModal({ isOpen, onClose, shipments, filters }) {
           <div className="export-section">
             <h3>Export Format</h3>
             <div className="export-options">
-              {exportOptions.map(option => (
+              {exportOptions.map((option) => (
                 <label key={option.value} className="export-option">
                   <input
                     type="radio"
@@ -165,7 +165,7 @@ function ExportModal({ isOpen, onClose, shipments, filters }) {
           <div className="export-section">
             <h3>Export Scope</h3>
             <div className="scope-options">
-              {scopeOptions.map(option => (
+              {scopeOptions.map((option) => (
                 <label key={option.value} className="scope-option">
                   <input
                     type="radio"
@@ -218,18 +218,14 @@ function ExportModal({ isOpen, onClose, shipments, filters }) {
           <button onClick={onClose} className="btn btn-secondary">
             Cancel
           </button>
-          <button 
-            onClick={handleExport} 
-            disabled={isExporting}
-            className="btn btn-primary"
-          >
+          <button onClick={handleExport} disabled={isExporting} className="btn btn-primary">
             <Download size={16} />
             {isExporting ? 'Exporting...' : 'Export'}
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default ExportModal
+export default ExportModal;

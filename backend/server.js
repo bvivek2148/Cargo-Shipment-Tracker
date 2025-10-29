@@ -25,7 +25,6 @@ const {
   authenticate,
   authorize,
   checkPermission,
-  optionalAuth,
   authRateLimit
 } = require('./middleware/auth');
 
@@ -183,7 +182,7 @@ const shipmentSchema = new mongoose.Schema({
     phone: {
       type: String,
       trim: true,
-      match: [/^[\+]?[1-9][\d]{0,15}$/, 'Please enter a valid phone number']
+      match: [/^[+]?[1-9][\d]{0,15}$/, 'Please enter a valid phone number']
     }
   },
   statusHistory: [{
@@ -704,7 +703,8 @@ app.post('/api/shipments/bulk', authenticate, checkPermission('manager'), rateLi
 app.use(errorTracker);
 
 // Enhanced error handling middleware
-app.use((err, req, res, next) => {
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, _next) => {
   logger.error('Unhandled error:', {
     error: err.message,
     stack: err.stack,

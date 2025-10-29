@@ -1,100 +1,100 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useAuth } from '../../contexts/AuthContext'
-import { Eye, EyeOff, LogIn, AlertCircle, Ship } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { Eye, EyeOff, LogIn, AlertCircle, Ship } from 'lucide-react';
 
 function Login() {
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [errors, setErrors] = useState({})
+    password: '',
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const { login, isAuthenticated, error, clearError } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
+  const { login, isAuthenticated, error, clearError } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      const from = location.state?.from?.pathname || '/dashboard'
-      navigate(from, { replace: true })
+      const from = location.state?.from?.pathname || '/dashboard';
+      navigate(from, { replace: true });
     }
-  }, [isAuthenticated, navigate, location])
+  }, [isAuthenticated, navigate, location]);
 
   // Clear errors when component mounts
   useEffect(() => {
-    clearError()
-  }, [clearError])
+    clearError();
+  }, [clearError]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
+    const { name, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
-    
+      [name]: value,
+    }));
+
     // Clear field error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
-      }))
+        [name]: '',
+      }));
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!formData.email) {
-      newErrors.email = 'Email is required'
+      newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid'
+      newErrors.email = 'Email is invalid';
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required'
+      newErrors.password = 'Password is required';
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!validateForm()) {
-      return
+      return;
     }
 
-    setIsSubmitting(true)
-    clearError()
+    setIsSubmitting(true);
+    clearError();
 
     try {
-      const result = await login(formData.email, formData.password)
-      
+      const result = await login(formData.email, formData.password);
+
       if (result.success) {
-        const from = location.state?.from?.pathname || '/dashboard'
-        navigate(from, { replace: true })
+        const from = location.state?.from?.pathname || '/dashboard';
+        navigate(from, { replace: true });
       }
     } catch (error) {
-      console.error('Login error:', error)
+      console.error('Login error:', error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const demoCredentials = [
     { role: 'Admin', email: 'admin@cargotracker.com', password: 'Admin123!@#' },
     { role: 'Manager', email: 'manager@cargotracker.com', password: 'Manager123!@#' },
-    { role: 'User', email: 'user@cargotracker.com', password: 'User123!@#' }
-  ]
+    { role: 'User', email: 'user@cargotracker.com', password: 'User123!@#' },
+  ];
 
   const fillDemoCredentials = (email, password) => {
-    setFormData({ email, password })
-  }
+    setFormData({ email, password });
+  };
 
   return (
     <div className="auth-container">
@@ -128,9 +128,7 @@ function Login() {
               placeholder="Enter your email"
               autoComplete="email"
             />
-            {errors.email && (
-              <span className="error-message">{errors.email}</span>
-            )}
+            {errors.email && <span className="error-message">{errors.email}</span>}
           </div>
 
           <div className="form-group">
@@ -154,17 +152,11 @@ function Login() {
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
-            {errors.password && (
-              <span className="error-message">{errors.password}</span>
-            )}
+            {errors.password && <span className="error-message">{errors.password}</span>}
           </div>
 
           <div className="form-actions">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn btn-primary btn-full"
-            >
+            <button type="submit" disabled={isSubmitting} className="btn btn-primary btn-full">
               <LogIn size={16} />
               {isSubmitting ? 'Signing In...' : 'Sign In'}
             </button>
@@ -200,7 +192,7 @@ function Login() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Login
+export default Login;

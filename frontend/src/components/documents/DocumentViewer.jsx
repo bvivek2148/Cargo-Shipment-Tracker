@@ -1,133 +1,146 @@
-import { useState, useEffect, useRef } from 'react'
-import { X, Download, ZoomIn, ZoomOut, RotateCw, Maximize2, Minimize2, ChevronLeft, ChevronRight, FileText, Image, File } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { useState, useEffect, useRef } from 'react';
+import {
+  X,
+  Download,
+  ZoomIn,
+  ZoomOut,
+  RotateCw,
+  Maximize2,
+  Minimize2,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  Image,
+  File,
+} from 'lucide-react';
+import toast from 'react-hot-toast';
 
 // Document viewer for different file types
 function DocumentViewer({ document, isOpen, onClose, onDownload }) {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const [zoom, setZoom] = useState(100)
-  const [rotation, setRotation] = useState(0)
-  const [isFullscreen, setIsFullscreen] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const viewerRef = useRef(null)
-  const contentRef = useRef(null)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [zoom, setZoom] = useState(100);
+  const [rotation, setRotation] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const viewerRef = useRef(null);
+  const contentRef = useRef(null);
 
   useEffect(() => {
     if (isOpen && document) {
-      loadDocument()
+      loadDocument();
     }
-  }, [isOpen, document])
+  }, [isOpen, document]);
 
   useEffect(() => {
     const handleKeyPress = (e) => {
-      if (!isOpen) return
-      
+      if (!isOpen) return;
+
       switch (e.key) {
         case 'Escape':
-          onClose()
-          break
+          onClose();
+          break;
         case 'ArrowLeft':
-          previousPage()
-          break
+          previousPage();
+          break;
         case 'ArrowRight':
-          nextPage()
-          break
+          nextPage();
+          break;
         case '+':
         case '=':
-          zoomIn()
-          break
+          zoomIn();
+          break;
         case '-':
-          zoomOut()
-          break
+          zoomOut();
+          break;
         case 'r':
-          rotate()
-          break
+          rotate();
+          break;
         case 'f':
-          toggleFullscreen()
-          break
+          toggleFullscreen();
+          break;
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyPress)
-    return () => document.removeEventListener('keydown', handleKeyPress)
-  }, [isOpen, currentPage, totalPages])
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
+  }, [isOpen, currentPage, totalPages]);
 
   const loadDocument = async () => {
-    setIsLoading(true)
-    setError(null)
-    
+    setIsLoading(true);
+    setError(null);
+
     try {
       // Simulate loading delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // For demo purposes, set mock total pages based on file type
       if (document.type === 'application/pdf') {
-        setTotalPages(Math.floor(Math.random() * 10) + 1)
+        setTotalPages(Math.floor(Math.random() * 10) + 1);
       } else {
-        setTotalPages(1)
+        setTotalPages(1);
       }
-      
-      setCurrentPage(1)
-      setZoom(100)
-      setRotation(0)
-      setIsLoading(false)
+
+      setCurrentPage(1);
+      setZoom(100);
+      setRotation(0);
+      setIsLoading(false);
     } catch (err) {
-      setError('Failed to load document')
-      setIsLoading(false)
+      setError('Failed to load document');
+      setIsLoading(false);
     }
-  }
+  };
 
   const nextPage = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(prev => prev + 1)
+      setCurrentPage((prev) => prev + 1);
     }
-  }
+  };
 
   const previousPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1)
+      setCurrentPage((prev) => prev - 1);
     }
-  }
+  };
 
   const zoomIn = () => {
-    setZoom(prev => Math.min(prev + 25, 300))
-  }
+    setZoom((prev) => Math.min(prev + 25, 300));
+  };
 
   const zoomOut = () => {
-    setZoom(prev => Math.max(prev - 25, 25))
-  }
+    setZoom((prev) => Math.max(prev - 25, 25));
+  };
 
   const rotate = () => {
-    setRotation(prev => (prev + 90) % 360)
-  }
+    setRotation((prev) => (prev + 90) % 360);
+  };
 
   const toggleFullscreen = () => {
     if (!isFullscreen) {
       if (viewerRef.current?.requestFullscreen) {
-        viewerRef.current.requestFullscreen()
+        viewerRef.current.requestFullscreen();
       }
     } else {
       if (document.exitFullscreen) {
-        document.exitFullscreen()
+        document.exitFullscreen();
       }
     }
-    setIsFullscreen(!isFullscreen)
-  }
+    setIsFullscreen(!isFullscreen);
+  };
 
   const handleDownload = () => {
     if (onDownload) {
-      onDownload(document)
+      onDownload(document);
     } else {
       // Default download behavior
-      const link = document.createElement('a')
-      link.href = document.url
-      link.download = document.name
-      link.click()
-      toast.success(`Downloading ${document.name}`)
+      const link = document.createElement('a');
+      link.href = document.url;
+      link.download = document.name;
+      link.click();
+      toast.success(`Downloading ${document.name}`);
     }
-  }
+  };
 
   const renderDocumentContent = () => {
     if (isLoading) {
@@ -138,7 +151,7 @@ function DocumentViewer({ document, isOpen, onClose, onDownload }) {
             <p>Loading document...</p>
           </div>
         </div>
-      )
+      );
     }
 
     if (error) {
@@ -153,14 +166,14 @@ function DocumentViewer({ document, isOpen, onClose, onDownload }) {
             </button>
           </div>
         </div>
-      )
+      );
     }
 
     const contentStyle = {
       transform: `scale(${zoom / 100}) rotate(${rotation}deg)`,
       transformOrigin: 'center center',
-      transition: 'transform 0.3s ease'
-    }
+      transition: 'transform 0.3s ease',
+    };
 
     // Render based on document type
     switch (document.type) {
@@ -172,7 +185,9 @@ function DocumentViewer({ document, isOpen, onClose, onDownload }) {
                 <FileText size={64} />
                 <h3>PDF Document</h3>
                 <p>{document.name}</p>
-                <p>Page {currentPage} of {totalPages}</p>
+                <p>
+                  Page {currentPage} of {totalPages}
+                </p>
                 <div className="pdf-content">
                   {/* In a real implementation, this would render the actual PDF */}
                   <div className="mock-pdf-content">
@@ -216,22 +231,22 @@ function DocumentViewer({ document, isOpen, onClose, onDownload }) {
               </div>
             </div>
           </div>
-        )
+        );
 
       case 'image/jpeg':
       case 'image/png':
       case 'image/gif':
         return (
           <div className="image-viewer" style={contentStyle}>
-            <img 
-              src={document.url} 
+            <img
+              src={document.url}
               alt={document.name}
               className="document-image"
               onLoad={() => setIsLoading(false)}
               onError={() => setError('Failed to load image')}
             />
           </div>
-        )
+        );
 
       case 'text/plain':
         return (
@@ -252,7 +267,7 @@ function DocumentViewer({ document, isOpen, onClose, onDownload }) {
               </div>
             </div>
           </div>
-        )
+        );
 
       default:
         return (
@@ -268,17 +283,17 @@ function DocumentViewer({ document, isOpen, onClose, onDownload }) {
               </button>
             </div>
           </div>
-        )
+        );
     }
-  }
+  };
 
   if (!isOpen || !document) {
-    return null
+    return null;
   }
 
   return (
     <div className="document-viewer-overlay" onClick={onClose}>
-      <div 
+      <div
         ref={viewerRef}
         className={`document-viewer ${isFullscreen ? 'fullscreen' : ''}`}
         onClick={(e) => e.stopPropagation()}
@@ -288,27 +303,23 @@ function DocumentViewer({ document, isOpen, onClose, onDownload }) {
           <div className="document-info">
             <h3>{document.name}</h3>
             <span className="document-meta">
-              {document.size && `${(document.size / 1024).toFixed(1)} KB`} • 
+              {document.size && `${(document.size / 1024).toFixed(1)} KB`} •
               {document.type.split('/')[1].toUpperCase()}
             </span>
           </div>
-          
+
           <div className="viewer-controls">
             {/* Navigation Controls */}
             {totalPages > 1 && (
               <div className="page-controls">
-                <button 
-                  onClick={previousPage} 
-                  disabled={currentPage === 1}
-                  className="control-btn"
-                >
+                <button onClick={previousPage} disabled={currentPage === 1} className="control-btn">
                   <ChevronLeft size={16} />
                 </button>
                 <span className="page-info">
                   {currentPage} / {totalPages}
                 </span>
-                <button 
-                  onClick={nextPage} 
+                <button
+                  onClick={nextPage}
                   disabled={currentPage === totalPages}
                   className="control-btn"
                 >
@@ -316,7 +327,7 @@ function DocumentViewer({ document, isOpen, onClose, onDownload }) {
                 </button>
               </div>
             )}
-            
+
             {/* Zoom Controls */}
             <div className="zoom-controls">
               <button onClick={zoomOut} className="control-btn">
@@ -327,7 +338,7 @@ function DocumentViewer({ document, isOpen, onClose, onDownload }) {
                 <ZoomIn size={16} />
               </button>
             </div>
-            
+
             {/* Action Controls */}
             <div className="action-controls">
               <button onClick={rotate} className="control-btn">
@@ -364,7 +375,7 @@ function DocumentViewer({ document, isOpen, onClose, onDownload }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default DocumentViewer
+export default DocumentViewer;

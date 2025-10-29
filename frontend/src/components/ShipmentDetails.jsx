@@ -1,26 +1,41 @@
-import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft, Package, MapPin, Calendar, Weight, FileText,
-  Clock, CheckCircle, AlertCircle, Truck, Plane, Ship as ShipIcon,
-  Edit, Save, X, Upload, Download, Eye
-} from 'lucide-react'
-import { format } from 'date-fns'
+  ArrowLeft,
+  Package,
+  MapPin,
+  Calendar,
+  Weight,
+  FileText,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Truck,
+  Plane,
+  Ship as ShipIcon,
+  Edit,
+  Save,
+  X,
+  Upload,
+  Download,
+  Eye,
+} from 'lucide-react';
+import { format } from 'date-fns';
 
 function ShipmentDetails({ shipments }) {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const [isEditing, setIsEditing] = useState(false)
-  const [editedShipment, setEditedShipment] = useState(null)
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedShipment, setEditedShipment] = useState(null);
   const [newStatusUpdate, setNewStatusUpdate] = useState({
     status: '',
     location: '',
-    notes: ''
-  })
-  const [showAddStatus, setShowAddStatus] = useState(false)
+    notes: '',
+  });
+  const [showAddStatus, setShowAddStatus] = useState(false);
 
-  const shipment = shipments.find(s => (s._id || s.id) === id)
-  
+  const shipment = shipments.find((s) => (s._id || s.id) === id);
+
   if (!shipment) {
     return (
       <div className="shipment-details">
@@ -33,12 +48,12 @@ function ShipmentDetails({ shipments }) {
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   // Enhanced timeline data with more realistic tracking events
   const getEnhancedTimeline = (shipment) => {
-    const timeline = []
+    const timeline = [];
 
     // Always start with shipment created
     timeline.push({
@@ -48,8 +63,8 @@ function ShipmentDetails({ shipments }) {
       location: shipment.origin,
       notes: 'Shipment registered in system',
       icon: Package,
-      completed: true
-    })
+      completed: true,
+    });
 
     // Add status history if available
     if (shipment.statusHistory && shipment.statusHistory.length > 0) {
@@ -61,9 +76,9 @@ function ShipmentDetails({ shipments }) {
           location: history.location || '',
           notes: history.notes || `Status updated to ${history.status}`,
           icon: getStatusIcon(history.status),
-          completed: true
-        })
-      })
+          completed: true,
+        });
+      });
     } else {
       // Generate realistic timeline based on current status
       if (shipment.status !== 'Pending') {
@@ -74,8 +89,8 @@ function ShipmentDetails({ shipments }) {
           location: shipment.origin,
           notes: 'Shipment prepared for dispatch',
           icon: Package,
-          completed: true
-        })
+          completed: true,
+        });
       }
 
       if (shipment.status === 'In Transit' || shipment.status === 'Delivered') {
@@ -86,8 +101,8 @@ function ShipmentDetails({ shipments }) {
           location: 'Transit Hub',
           notes: 'Shipment in transit to destination',
           icon: Truck,
-          completed: true
-        })
+          completed: true,
+        });
       }
 
       if (shipment.status === 'Delivered') {
@@ -98,8 +113,8 @@ function ShipmentDetails({ shipments }) {
           location: shipment.destination,
           notes: 'Shipment successfully delivered',
           icon: CheckCircle,
-          completed: true
-        })
+          completed: true,
+        });
       }
     }
 
@@ -113,34 +128,46 @@ function ShipmentDetails({ shipments }) {
         notes: 'Expected delivery',
         icon: CheckCircle,
         completed: false,
-        estimated: true
-      })
+        estimated: true,
+      });
     }
 
-    return timeline.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-  }
+    return timeline.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+  };
 
   const getStatusIcon = (status) => {
     switch (status.toLowerCase()) {
-      case 'pending': return Clock
-      case 'processing': return Package
-      case 'in transit': return Truck
-      case 'delivered': return CheckCircle
-      case 'cancelled': return AlertCircle
-      default: return Package
+      case 'pending':
+        return Clock;
+      case 'processing':
+        return Package;
+      case 'in transit':
+        return Truck;
+      case 'delivered':
+        return CheckCircle;
+      case 'cancelled':
+        return AlertCircle;
+      default:
+        return Package;
     }
-  }
+  };
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
-      case 'delivered': return 'green'
-      case 'in transit': return 'orange'
-      case 'pending': return 'red'
-      case 'cancelled': return 'gray'
-      case 'processing': return 'blue'
-      default: return 'blue'
+      case 'delivered':
+        return 'green';
+      case 'in transit':
+        return 'orange';
+      case 'pending':
+        return 'red';
+      case 'cancelled':
+        return 'gray';
+      case 'processing':
+        return 'blue';
+      default:
+        return 'blue';
     }
-  }
+  };
 
   return (
     <div className="shipment-details">
@@ -220,10 +247,9 @@ function ShipmentDetails({ shipments }) {
               <div className="info-row">
                 <span className="info-label">Estimated Delivery:</span>
                 <span className="info-value">
-                  {shipment.estimatedDelivery ?
-                    new Date(shipment.estimatedDelivery).toLocaleDateString() :
-                    shipment.estimatedDelivery
-                  }
+                  {shipment.estimatedDelivery
+                    ? new Date(shipment.estimatedDelivery).toLocaleDateString()
+                    : shipment.estimatedDelivery}
                 </span>
               </div>
               <div className="info-row">
@@ -255,10 +281,12 @@ function ShipmentDetails({ shipments }) {
                       <label>Status</label>
                       <select
                         value={newStatusUpdate.status}
-                        onChange={(e) => setNewStatusUpdate(prev => ({
-                          ...prev,
-                          status: e.target.value
-                        }))}
+                        onChange={(e) =>
+                          setNewStatusUpdate((prev) => ({
+                            ...prev,
+                            status: e.target.value,
+                          }))
+                        }
                       >
                         <option value="">Select Status</option>
                         <option value="Processing">Processing</option>
@@ -273,10 +301,12 @@ function ShipmentDetails({ shipments }) {
                         type="text"
                         placeholder="Current location..."
                         value={newStatusUpdate.location}
-                        onChange={(e) => setNewStatusUpdate(prev => ({
-                          ...prev,
-                          location: e.target.value
-                        }))}
+                        onChange={(e) =>
+                          setNewStatusUpdate((prev) => ({
+                            ...prev,
+                            location: e.target.value,
+                          }))
+                        }
                       />
                     </div>
                     <div className="form-group full-width">
@@ -284,10 +314,12 @@ function ShipmentDetails({ shipments }) {
                       <textarea
                         placeholder="Additional notes..."
                         value={newStatusUpdate.notes}
-                        onChange={(e) => setNewStatusUpdate(prev => ({
-                          ...prev,
-                          notes: e.target.value
-                        }))}
+                        onChange={(e) =>
+                          setNewStatusUpdate((prev) => ({
+                            ...prev,
+                            notes: e.target.value,
+                          }))
+                        }
                         rows="2"
                       />
                     </div>
@@ -303,9 +335,9 @@ function ShipmentDetails({ shipments }) {
                     <button
                       onClick={() => {
                         // In a real app, this would call an API
-                        console.log('Adding status update:', newStatusUpdate)
-                        setShowAddStatus(false)
-                        setNewStatusUpdate({ status: '', location: '', notes: '' })
+                        console.log('Adding status update:', newStatusUpdate);
+                        setShowAddStatus(false);
+                        setNewStatusUpdate({ status: '', location: '', notes: '' });
                       }}
                       className="btn btn-primary btn-sm"
                       disabled={!newStatusUpdate.status}
@@ -320,8 +352,8 @@ function ShipmentDetails({ shipments }) {
               {/* Enhanced Timeline */}
               <div className="enhanced-timeline">
                 {getEnhancedTimeline(shipment).map((event, index) => {
-                  const IconComponent = event.icon
-                  const isLast = index === getEnhancedTimeline(shipment).length - 1
+                  const IconComponent = event.icon;
+                  const isLast = index === getEnhancedTimeline(shipment).length - 1;
 
                   return (
                     <div
@@ -354,7 +386,7 @@ function ShipmentDetails({ shipments }) {
                         <p className="timeline-notes">{event.notes}</p>
                       </div>
                     </div>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -362,7 +394,7 @@ function ShipmentDetails({ shipments }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default ShipmentDetails
+export default ShipmentDetails;

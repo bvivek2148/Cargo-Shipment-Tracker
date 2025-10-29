@@ -1,12 +1,12 @@
-import { useState } from 'react'
-import { useSocket } from '../../contexts/SocketContext'
-import { Play, Pause, RotateCcw, Zap } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { useState } from 'react';
+import { useSocket } from '../../contexts/SocketContext';
+import { Play, Pause, RotateCcw, Zap } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 function EventSimulator() {
-  const { socket, isConnected, emitEvent } = useSocket()
-  const [isSimulating, setIsSimulating] = useState(false)
-  const [simulationInterval, setSimulationInterval] = useState(null)
+  const { socket, isConnected, emitEvent } = useSocket();
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [simulationInterval, setSimulationInterval] = useState(null);
 
   const sampleEvents = [
     {
@@ -17,8 +17,8 @@ function EventSimulator() {
         origin: 'New York, USA',
         destination: 'London, UK',
         cargo: 'Electronics',
-        weight: '500 kg'
-      }
+        weight: '500 kg',
+      },
     },
     {
       type: 'shipment:updated',
@@ -26,8 +26,8 @@ function EventSimulator() {
         trackingNumber: 'CST' + Math.floor(Math.random() * 1000),
         status: 'In Transit',
         location: 'Atlantic Ocean',
-        estimatedDelivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
-      }
+        estimatedDelivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+      },
     },
     {
       type: 'shipment:delivered',
@@ -35,90 +35,90 @@ function EventSimulator() {
         trackingNumber: 'CST' + Math.floor(Math.random() * 1000),
         status: 'Delivered',
         deliveryTime: new Date().toISOString(),
-        recipient: 'John Smith'
-      }
+        recipient: 'John Smith',
+      },
     },
     {
       type: 'system:alert',
       data: {
         message: 'Weather alert: Storm approaching shipping route',
         priority: 'high',
-        affectedShipments: 5
-      }
+        affectedShipments: 5,
+      },
     },
     {
       type: 'shipment:delayed',
       data: {
         trackingNumber: 'CST' + Math.floor(Math.random() * 1000),
         reason: 'Port congestion',
-        newEstimatedDelivery: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString()
-      }
-    }
-  ]
+        newEstimatedDelivery: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+    },
+  ];
 
   const triggerRandomEvent = () => {
     if (!socket || !isConnected) {
-      toast.error('Not connected to real-time service')
-      return
+      toast.error('Not connected to real-time service');
+      return;
     }
 
-    const randomEvent = sampleEvents[Math.floor(Math.random() * sampleEvents.length)]
-    
+    const randomEvent = sampleEvents[Math.floor(Math.random() * sampleEvents.length)];
+
     // Simulate the event by triggering the socket listeners directly
     if (socket._listeners && socket._listeners[randomEvent.type]) {
-      socket._listeners[randomEvent.type].forEach(callback => {
-        callback(randomEvent.data)
-      })
+      socket._listeners[randomEvent.type].forEach((callback) => {
+        callback(randomEvent.data);
+      });
     }
 
     toast.success(`Simulated: ${randomEvent.type}`, {
       icon: '⚡',
-      duration: 2000
-    })
-  }
+      duration: 2000,
+    });
+  };
 
   const startSimulation = () => {
-    if (isSimulating) return
+    if (isSimulating) return;
 
-    setIsSimulating(true)
+    setIsSimulating(true);
     const interval = setInterval(() => {
-      triggerRandomEvent()
-    }, 3000) // Trigger event every 3 seconds
+      triggerRandomEvent();
+    }, 3000); // Trigger event every 3 seconds
 
-    setSimulationInterval(interval)
+    setSimulationInterval(interval);
     toast.success('Real-time simulation started', {
       icon: '🚀',
-      duration: 2000
-    })
-  }
+      duration: 2000,
+    });
+  };
 
   const stopSimulation = () => {
-    if (!isSimulating) return
+    if (!isSimulating) return;
 
-    setIsSimulating(false)
+    setIsSimulating(false);
     if (simulationInterval) {
-      clearInterval(simulationInterval)
-      setSimulationInterval(null)
+      clearInterval(simulationInterval);
+      setSimulationInterval(null);
     }
 
     toast('Real-time simulation stopped', {
       icon: '⏹️',
-      duration: 2000
-    })
-  }
+      duration: 2000,
+    });
+  };
 
   const triggerSpecificEvent = (eventType) => {
-    const event = sampleEvents.find(e => e.type === eventType)
+    const event = sampleEvents.find((e) => e.type === eventType);
     if (event && socket && socket._listeners && socket._listeners[event.type]) {
-      socket._listeners[event.type].forEach(callback => {
-        callback(event.data)
-      })
+      socket._listeners[event.type].forEach((callback) => {
+        callback(event.data);
+      });
       toast.success(`Triggered: ${eventType}`, {
         icon: '⚡',
-        duration: 2000
-      })
+        duration: 2000,
+      });
     }
-  }
+  };
 
   return (
     <div className="event-simulator">
@@ -142,11 +142,7 @@ function EventSimulator() {
               <Play size={16} />
               Start Auto Simulation
             </button>
-            <button
-              onClick={stopSimulation}
-              disabled={!isSimulating}
-              className="btn btn-secondary"
-            >
+            <button onClick={stopSimulation} disabled={!isSimulating} className="btn btn-secondary">
               <Pause size={16} />
               Stop Simulation
             </button>
@@ -216,7 +212,7 @@ function EventSimulator() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default EventSimulator
+export default EventSimulator;

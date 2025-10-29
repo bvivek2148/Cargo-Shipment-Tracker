@@ -1,36 +1,36 @@
-import { useState } from 'react'
-import { X, Trash2, AlertTriangle } from 'lucide-react'
+import { useState } from 'react';
+import { X, Trash2, AlertTriangle } from 'lucide-react';
 
 function DeleteConfirmModal({ isOpen, onClose, onConfirm, user }) {
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [confirmText, setConfirmText] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmText, setConfirmText] = useState('');
 
   const handleConfirm = async () => {
     if (confirmText !== 'DELETE') {
-      return
+      return;
     }
 
-    setIsDeleting(true)
-    
+    setIsDeleting(true);
+
     try {
-      await onConfirm(user._id)
-      handleClose()
+      await onConfirm(user._id);
+      handleClose();
     } catch (error) {
-      console.error('Delete error:', error)
+      console.error('Delete error:', error);
     } finally {
-      setIsDeleting(false)
+      setIsDeleting(false);
     }
-  }
+  };
 
   const handleClose = () => {
-    setConfirmText('')
-    setIsDeleting(false)
-    onClose()
-  }
+    setConfirmText('');
+    setIsDeleting(false);
+    onClose();
+  };
 
-  if (!isOpen || !user) return null
+  if (!isOpen || !user) return null;
 
-  const isConfirmValid = confirmText === 'DELETE'
+  const isConfirmValid = confirmText === 'DELETE';
 
   return (
     <div className="modal-overlay">
@@ -49,26 +49,21 @@ function DeleteConfirmModal({ isOpen, onClose, onConfirm, user }) {
           <div className="danger-warning">
             <AlertTriangle size={48} className="warning-icon" />
             <h3>This action cannot be undone!</h3>
-            <p>
-              You are about to permanently delete the user account for:
-            </p>
+            <p>You are about to permanently delete the user account for:</p>
             <div className="user-info-card">
               <div className="user-avatar">
-                {user.firstName?.[0]}{user.lastName?.[0]}
+                {user.firstName?.[0]}
+                {user.lastName?.[0]}
               </div>
               <div className="user-details">
                 <div className="user-name">
                   {user.firstName} {user.lastName}
                 </div>
                 <div className="user-email">{user.email}</div>
-                <span className={`role-badge role-${user.role}`}>
-                  {user.role}
-                </span>
+                <span className={`role-badge role-${user.role}`}>{user.role}</span>
               </div>
             </div>
-            <p>
-              This will permanently remove all user data, including:
-            </p>
+            <p>This will permanently remove all user data, including:</p>
             <ul>
               <li>User profile and account information</li>
               <li>Access permissions and role assignments</li>
@@ -89,9 +84,7 @@ function DeleteConfirmModal({ isOpen, onClose, onConfirm, user }) {
               className={confirmText && !isConfirmValid ? 'error' : ''}
             />
             {confirmText && !isConfirmValid && (
-              <span className="error-message">
-                Please type "DELETE" exactly as shown
-              </span>
+              <span className="error-message">Please type "DELETE" exactly as shown</span>
             )}
           </div>
         </div>
@@ -117,7 +110,7 @@ function DeleteConfirmModal({ isOpen, onClose, onConfirm, user }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default DeleteConfirmModal
+export default DeleteConfirmModal;

@@ -1,22 +1,22 @@
-import { useState, useEffect } from 'react'
-import { Mail, Settings, TestTube, CheckCircle, AlertCircle, Send } from 'lucide-react'
-import { useAuth } from '../../contexts/AuthContext'
-import emailService from '../../services/emailService'
-import toast from 'react-hot-toast'
+import { useState, useEffect } from 'react';
+import { Mail, Settings, TestTube, CheckCircle, AlertCircle, Send } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import emailService from '../../services/emailService';
+import toast from 'react-hot-toast';
 
 function EmailSettings() {
-  const { user, updateProfile } = useAuth()
+  const { user, updateProfile } = useAuth();
   const [emailPreferences, setEmailPreferences] = useState({
     enabled: true,
     shipmentCreated: true,
     shipmentDelivered: true,
     shipmentDelayed: true,
-    systemAlerts: true
-  })
-  const [testEmail, setTestEmail] = useState('')
-  const [isTesting, setIsTesting] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-  const [emailStats, setEmailStats] = useState(null)
+    systemAlerts: true,
+  });
+  const [testEmail, setTestEmail] = useState('');
+  const [isTesting, setIsTesting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [emailStats, setEmailStats] = useState(null);
 
   useEffect(() => {
     // Load current preferences
@@ -26,24 +26,24 @@ function EmailSettings() {
         shipmentCreated: user.preferences.notifications.shipmentCreated ?? true,
         shipmentDelivered: user.preferences.notifications.shipmentDelivered ?? true,
         shipmentDelayed: user.preferences.notifications.shipmentDelayed ?? true,
-        systemAlerts: user.preferences.notifications.systemAlerts ?? true
-      })
+        systemAlerts: user.preferences.notifications.systemAlerts ?? true,
+      });
     }
 
     // Load email statistics
-    setEmailStats(emailService.getEmailStats())
-  }, [user])
+    setEmailStats(emailService.getEmailStats());
+  }, [user]);
 
   const handlePreferenceChange = (key, value) => {
-    setEmailPreferences(prev => ({
+    setEmailPreferences((prev) => ({
       ...prev,
-      [key]: value
-    }))
-  }
+      [key]: value,
+    }));
+  };
 
   const handleSavePreferences = async () => {
-    setIsSaving(true)
-    
+    setIsSaving(true);
+
     try {
       const updatedPreferences = {
         ...user.preferences,
@@ -53,59 +53,59 @@ function EmailSettings() {
           shipmentCreated: emailPreferences.shipmentCreated,
           shipmentDelivered: emailPreferences.shipmentDelivered,
           shipmentDelayed: emailPreferences.shipmentDelayed,
-          systemAlerts: emailPreferences.systemAlerts
-        }
-      }
+          systemAlerts: emailPreferences.systemAlerts,
+        },
+      };
 
       const result = await updateProfile({
-        preferences: updatedPreferences
-      })
+        preferences: updatedPreferences,
+      });
 
       if (result.success) {
         // Update email service settings
-        emailService.setEnabled(emailPreferences.enabled)
+        emailService.setEnabled(emailPreferences.enabled);
         emailService.updateNotificationTypes({
           shipmentCreated: emailPreferences.shipmentCreated,
           shipmentDelivered: emailPreferences.shipmentDelivered,
           shipmentDelayed: emailPreferences.shipmentDelayed,
-          systemAlerts: emailPreferences.systemAlerts
-        })
+          systemAlerts: emailPreferences.systemAlerts,
+        });
 
-        toast.success('Email preferences saved successfully')
+        toast.success('Email preferences saved successfully');
       } else {
-        toast.error('Failed to save email preferences')
+        toast.error('Failed to save email preferences');
       }
     } catch (error) {
-      console.error('Error saving email preferences:', error)
-      toast.error('Failed to save email preferences')
+      console.error('Error saving email preferences:', error);
+      toast.error('Failed to save email preferences');
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleTestEmail = async () => {
     if (!testEmail) {
-      toast.error('Please enter an email address')
-      return
+      toast.error('Please enter an email address');
+      return;
     }
 
-    setIsTesting(true)
-    
+    setIsTesting(true);
+
     try {
-      const result = await emailService.testEmail(testEmail)
-      
+      const result = await emailService.testEmail(testEmail);
+
       if (result.success) {
-        toast.success(`Test email sent to ${testEmail}`)
+        toast.success(`Test email sent to ${testEmail}`);
       } else {
-        toast.error(`Failed to send test email: ${result.reason}`)
+        toast.error(`Failed to send test email: ${result.reason}`);
       }
     } catch (error) {
-      console.error('Error sending test email:', error)
-      toast.error('Failed to send test email')
+      console.error('Error sending test email:', error);
+      toast.error('Failed to send test email');
     } finally {
-      setIsTesting(false)
+      setIsTesting(false);
     }
-  }
+  };
 
   return (
     <div className="email-settings">
@@ -277,11 +277,7 @@ function EmailSettings() {
 
         {/* Save Button */}
         <div className="settings-actions">
-          <button
-            onClick={handleSavePreferences}
-            disabled={isSaving}
-            className="btn btn-primary"
-          >
+          <button onClick={handleSavePreferences} disabled={isSaving} className="btn btn-primary">
             {isSaving ? (
               <>
                 <Settings size={16} className="spinning" />
@@ -297,7 +293,7 @@ function EmailSettings() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default EmailSettings
+export default EmailSettings;
