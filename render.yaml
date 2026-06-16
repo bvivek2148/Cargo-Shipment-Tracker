@@ -1,0 +1,51 @@
+services:
+  # -------------------------------------
+  # Redis Cache
+  # -------------------------------------
+  - type: redis
+    name: cargo-redis
+    ipAllowList: [] # Allows internal connections only
+    plan: free
+    maxmemoryPolicy: noeviction
+
+  # -------------------------------------
+  # Node.js Backend API
+  # -------------------------------------
+  - type: web
+    name: cargo-backend
+    env: node
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # MONGODB_URI needs to be set manually in the Render dashboard since we use Atlas
+      - key: MONGODB_URI
+        sync: false
+      # Automatically generate a secure JWT secret
+      - key: JWT_SECRET
+        generateValue: true
+      # Automatically connect to our Redis instance
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: cargo-redis
+          property: connectionString
+      # Allow CORS from the frontend (You may need to update this if Render gives you a different frontend URL)
+      - key: CORS_ORIGIN
+        value: https://cargo-frontend.onrender.com
+
+  # -------------------------------------
+  # React Frontend (Vite Static Site)
+  # -------------------------------------
+  - type: web
+    name: cargo-frontend
+    env: static
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      # Tell the frontend where the backend API is hosted
+      - key: VITE_API_URL
+        value: https://cargo-backend.onrender.com/api
